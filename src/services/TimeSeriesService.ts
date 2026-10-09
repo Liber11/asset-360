@@ -4,7 +4,7 @@ import { CDM_VIEWS, readRef, readString, refKey, viewProps } from '../domain/cdm
 import type { TimeWindow } from '../domain/timeRange';
 import type { InstanceRef } from '../state/workspaceState';
 
-import { listRelatedNodes } from './relatedNodes';
+import { listRelatedNodes, type AssetScope } from './relatedNodes';
 
 export type SeriesInfo = {
   ref: InstanceRef;
@@ -21,7 +21,7 @@ export type Point = { timestamp: number; value: number };
 export type SeriesList = { items: SeriesInfo[]; hasMore: boolean };
 
 export interface TimeSeriesService {
-  listForAsset(asset: InstanceRef): Promise<SeriesList>;
+  listForAsset(asset: InstanceRef, scope?: AssetScope): Promise<SeriesList>;
   /** Newest datapoint per series, keyed by `refKey`. Series without datapoints are absent. */
   getLatest(refs: InstanceRef[]): Promise<Map<string, Point>>;
   /** Average aggregates per series in `window`, keyed by `refKey`. */
@@ -51,8 +51,10 @@ function toInstanceId(ref: InstanceRef) {
 class CdmTimeSeriesService implements TimeSeriesService {
   constructor(private readonly client: TimeSeriesClient) {}
 
-  async listForAsset(asset: InstanceRef): Promise<SeriesList> {
-    const { items, hasMore } = await listRelatedNodes(this.client, CDM_VIEWS.timeSeries, asset);
+  async listForAsset(asset: InstanceRef, scope?: AssetScope): Promise<SeriesList> {
+    const { items, hasMore } = await listRelatedNodes(this.client, CDM_VIEWS.timeSeries, asset, {
+      includeSubAssets: scope?.includeSubAssets,
+    });
 
     const unitRefs = new Map<string, InstanceRef>();
     for (const item of items) {

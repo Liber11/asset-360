@@ -25,10 +25,14 @@ export function useWorkOrdersViewModel(): WorkOrdersViewModel {
   const { state, update } = useWorkspaceState();
   const { activityService } = useServices();
   const asset = state.selectedAsset;
+  const { includeSubAssets } = state;
 
   const query = useQuery({
-    queryKey: ['work-orders', asset ? refKey(asset) : null],
-    queryFn: () => (asset ? activityService.listForAsset(asset) : Promise.resolve({ items: [], hasMore: false })),
+    queryKey: ['work-orders', asset ? refKey(asset) : null, includeSubAssets],
+    queryFn: () =>
+      asset
+        ? activityService.listForAsset(asset, { includeSubAssets })
+        : Promise.resolve({ items: [], hasMore: false }),
     enabled: asset !== null,
   });
 

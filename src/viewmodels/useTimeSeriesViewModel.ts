@@ -36,10 +36,14 @@ export function useTimeSeriesViewModel(): TimeSeriesViewModel {
   const { state, update } = useWorkspaceState();
   const { timeSeriesService } = useServices();
   const asset = state.selectedAsset;
+  const { includeSubAssets } = state;
 
   const list = useQuery({
-    queryKey: ['time-series', asset ? refKey(asset) : null],
-    queryFn: () => (asset ? timeSeriesService.listForAsset(asset) : Promise.resolve({ items: [], hasMore: false })),
+    queryKey: ['time-series', asset ? refKey(asset) : null, includeSubAssets],
+    queryFn: () =>
+      asset
+        ? timeSeriesService.listForAsset(asset, { includeSubAssets })
+        : Promise.resolve({ items: [], hasMore: false }),
     enabled: asset !== null,
   });
 

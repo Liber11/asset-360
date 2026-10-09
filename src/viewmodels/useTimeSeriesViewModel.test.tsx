@@ -20,10 +20,18 @@ describe(useTimeSeriesViewModel.name, () => {
     const { result } = renderVm(service);
 
     await waitFor(() => expect(result.current.listStatus).toBe('success'));
-    expect(service.listForAsset).toHaveBeenCalledWith(ASSET);
+    expect(service.listForAsset).toHaveBeenCalledWith(ASSET, { includeSubAssets: true });
     expect(result.current.series).toEqual([PRESSURE, STATE]);
     expect(result.current.chartStatus).toBe('idle');
     expect(service.getLatest).not.toHaveBeenCalled();
+  });
+
+  it('limits the list to the asset itself when sub-assets are excluded', async () => {
+    const service = makeTimeSeriesService();
+    const { result } = renderVm(service, { includeSubAssets: false });
+
+    await waitFor(() => expect(result.current.listStatus).toBe('success'));
+    expect(service.listForAsset).toHaveBeenCalledWith(ASSET, { includeSubAssets: false });
   });
 
   it('reports list errors', async () => {

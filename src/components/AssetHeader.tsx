@@ -9,6 +9,7 @@ import {
 import { Button } from '@cognite/aura/components/button';
 import { Card, CardContent } from '@cognite/aura/components/card';
 import { EmptyState, EmptyStateDescription, EmptyStateTitle } from '@cognite/aura/components/empty-state';
+import { Switch } from '@cognite/aura/components/switch';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { Fragment } from 'react';
 
@@ -18,16 +19,23 @@ import { useAssetHeaderViewModel } from '../viewmodels/useAssetHeaderViewModel';
 import { PanelStatus } from './PanelStatus';
 
 export function AssetHeader() {
-  const { status, asset, errorMessage, retry, close } = useAssetHeaderViewModel();
+  const { status, asset, errorMessage, retry, close, includeSubAssets, setIncludeSubAssets } =
+    useAssetHeaderViewModel();
 
   return (
     <Card>
       <CardContent className="flex flex-col gap-3">
-        <div>
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <Button variant="ghost" size="sm" onClick={close}>
             <IconArrowLeft aria-hidden className="size-4" />
             New search
           </Button>
+          <Switch
+            label="Include sub-assets"
+            aria-label="Include sub-assets"
+            checked={includeSubAssets}
+            onCheckedChange={(checked) => setIncludeSubAssets(checked)}
+          />
         </div>
 
         {status === 'not-found' && (

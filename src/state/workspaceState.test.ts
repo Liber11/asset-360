@@ -41,6 +41,7 @@ describe(parseWorkspaceState.name, () => {
       selectedSeries: [{ space: 'sp', externalId: 'ts-1' }],
       range: '30d',
       openWorkOrder: { space: 'sp', externalId: 'wo-1' },
+      includeSubAssets: false,
     };
 
     expect(parseWorkspaceState(JSON.stringify(saved))).toEqual(saved);
@@ -53,6 +54,7 @@ describe(parseWorkspaceState.name, () => {
       selectedSeries: [{ space: 'sp', externalId: 'ok' }, 'bad'],
       range: '5y',
       openWorkOrder: 'wo-1',
+      includeSubAssets: 'yes',
     });
 
     expect(parseWorkspaceState(raw)).toEqual({

@@ -74,6 +74,17 @@ describe(useAssetHeaderViewModel.name, () => {
     await waitFor(() => expect(result.current.status).toBe('success'));
   });
 
+  it('includes sub-assets by default and lets the user turn it off', () => {
+    const { result } = renderHook(() => useAssetHeaderViewModel(), {
+      wrapper: makeProviders({ initialState: SELECTED }),
+    });
+    expect(result.current.includeSubAssets).toBe(true);
+
+    act(() => result.current.setIncludeSubAssets(false));
+
+    expect(result.current.includeSubAssets).toBe(false);
+  });
+
   it('closes the asset and returns to the start screen', async () => {
     const services = makeServices({
       assetService: makeAssetService({ retrieve: vi.fn(() => Promise.resolve(assetDetails('pump-101'))) }),

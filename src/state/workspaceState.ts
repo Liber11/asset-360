@@ -12,6 +12,8 @@ export type WorkspaceState = {
   range: TimeRangeKey;
   /** Work order whose detail dialog is open. */
   openWorkOrder: InstanceRef | null;
+  /** Panels also show items linked to assets below the selected one. */
+  includeSubAssets: boolean;
 };
 
 export const DEFAULT_WORKSPACE_STATE: WorkspaceState = {
@@ -20,6 +22,7 @@ export const DEFAULT_WORKSPACE_STATE: WorkspaceState = {
   selectedSeries: [],
   range: '7d',
   openWorkOrder: null,
+  includeSubAssets: true,
 };
 
 export function isInstanceRef(value: unknown): value is InstanceRef {
@@ -55,6 +58,7 @@ export function parseWorkspaceState(raw: string | undefined): WorkspaceState {
   const selectedSeries = 'selectedSeries' in parsed ? parsed.selectedSeries : undefined;
   const range = 'range' in parsed ? parsed.range : undefined;
   const openWorkOrder = 'openWorkOrder' in parsed ? parsed.openWorkOrder : undefined;
+  const includeSubAssets = 'includeSubAssets' in parsed ? parsed.includeSubAssets : undefined;
 
   return {
     selectedAsset: isInstanceRef(selectedAsset) ? selectedAsset : DEFAULT_WORKSPACE_STATE.selectedAsset,
@@ -62,6 +66,8 @@ export function parseWorkspaceState(raw: string | undefined): WorkspaceState {
     selectedSeries: Array.isArray(selectedSeries) ? selectedSeries.filter(isInstanceRef) : [],
     range: isTimeRangeKey(range) ? range : DEFAULT_WORKSPACE_STATE.range,
     openWorkOrder: isInstanceRef(openWorkOrder) ? openWorkOrder : DEFAULT_WORKSPACE_STATE.openWorkOrder,
+    includeSubAssets:
+      typeof includeSubAssets === 'boolean' ? includeSubAssets : DEFAULT_WORKSPACE_STATE.includeSubAssets,
   };
 }
 

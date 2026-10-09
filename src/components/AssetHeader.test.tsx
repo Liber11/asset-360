@@ -46,6 +46,17 @@ describe('AssetHeader', () => {
     expect(await screen.findByText('boom')).toBeInTheDocument();
   });
 
+  it('toggles whether panels include sub-assets', async () => {
+    renderHeader(vi.fn(() => Promise.resolve(assetDetails('pump-101'))));
+
+    const toggle = await screen.findByRole('switch', { name: 'Include sub-assets' });
+    expect(toggle).toBeChecked();
+
+    await userEvent.click(toggle);
+
+    expect(toggle).not.toBeChecked();
+  });
+
   it('clears the selection when the user starts a new search', async () => {
     renderHeader(vi.fn(() => Promise.resolve(assetDetails('pump-101'))));
 

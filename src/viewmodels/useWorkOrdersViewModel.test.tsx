@@ -22,9 +22,17 @@ describe(useWorkOrdersViewModel.name, () => {
     const { result } = renderVm(listForAsset);
 
     await waitFor(() => expect(result.current.status).toBe('success'));
-    expect(listForAsset).toHaveBeenCalledWith(ASSET);
+    expect(listForAsset).toHaveBeenCalledWith(ASSET, { includeSubAssets: true });
     expect(result.current.orders).toEqual([ORDER]);
     expect(result.current.hasMore).toBe(true);
+  });
+
+  it('limits the list to the asset itself when sub-assets are excluded', async () => {
+    const listForAsset = vi.fn(() => Promise.resolve({ items: [], hasMore: false }));
+    const { result } = renderVm(listForAsset, makeHostApi(), { includeSubAssets: false });
+
+    await waitFor(() => expect(result.current.status).toBe('success'));
+    expect(listForAsset).toHaveBeenCalledWith(ASSET, { includeSubAssets: false });
   });
 
   it('reports errors and no-access', async () => {

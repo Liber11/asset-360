@@ -81,6 +81,16 @@ describe('ActivityService', () => {
     expect(result.hasMore).toBe(true);
   });
 
+  it('passes the sub-asset scope to the query', async () => {
+    const client = makeClient([]);
+
+    await createActivityService(client).listForAsset({ space: 'sp', externalId: 'a1' }, { includeSubAssets: true });
+
+    expect(client.instances.list).toHaveBeenCalledWith(
+      expect.objectContaining({ filter: expect.objectContaining({ or: expect.any(Array) }) })
+    );
+  });
+
   it('propagates API errors', async () => {
     const client = makeClient([]);
     vi.mocked(client.instances.list).mockRejectedValue({ status: 403 });

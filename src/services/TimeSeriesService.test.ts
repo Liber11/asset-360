@@ -55,6 +55,14 @@ describe('TimeSeriesService', () => {
       ]);
     });
 
+    it('passes the sub-asset scope to the query', async () => {
+      await createTimeSeriesService(client).listForAsset({ space: 'sp', externalId: 'a1' }, { includeSubAssets: true });
+
+      expect(mocks.list).toHaveBeenCalledWith(
+        expect.objectContaining({ filter: expect.objectContaining({ or: expect.any(Array) }) })
+      );
+    });
+
     it('skips the unit request when no series has a unit', async () => {
       mocks.list.mockResolvedValue({ items: [node('ts-a', 'CogniteTimeSeries', { name: 'A' })] });
 

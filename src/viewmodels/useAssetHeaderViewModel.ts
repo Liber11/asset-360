@@ -14,6 +14,9 @@ export type AssetHeaderViewModel = {
   errorMessage?: string;
   retry: () => void;
   close: () => void;
+  /** Panels also show items linked to assets below this one (host-synced). */
+  includeSubAssets: boolean;
+  setIncludeSubAssets: (value: boolean) => void;
 };
 
 export function useAssetHeaderViewModel(): AssetHeaderViewModel {
@@ -29,6 +32,7 @@ export function useAssetHeaderViewModel(): AssetHeaderViewModel {
 
   const { refetch } = query;
   const retry = useCallback(() => void refetch(), [refetch]);
+  const setIncludeSubAssets = useCallback((value: boolean) => update({ includeSubAssets: value }), [update]);
   const close = useCallback(() => update({ selectedAsset: null, selectedSeries: [], openWorkOrder: null }), [update]);
 
   const status = toLoadStatus(query);
@@ -39,5 +43,7 @@ export function useAssetHeaderViewModel(): AssetHeaderViewModel {
     errorMessage: query.isError ? errorMessage(query.error) : undefined,
     retry,
     close,
+    includeSubAssets: state.includeSubAssets,
+    setIncludeSubAssets,
   };
 }

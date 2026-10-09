@@ -2,7 +2,7 @@ import { CDM_VIEWS, readRef, readString, viewProps } from '../domain/cdm';
 import { sortWorkOrders, type WorkOrder } from '../domain/workOrders';
 import type { InstanceRef } from '../state/workspaceState';
 
-import { listRelatedNodes, RELATED_LIMIT, type ListInstancesClient } from './relatedNodes';
+import { listRelatedNodes, RELATED_LIMIT, type AssetScope, type ListInstancesClient } from './relatedNodes';
 
 export type WorkOrderList = { items: WorkOrder[]; hasMore: boolean };
 
@@ -13,14 +13,17 @@ export type WorkOrderList = { items: WorkOrder[]; hasMore: boolean };
 const SCAN_LIMIT = 1000;
 
 export interface ActivityService {
-  listForAsset(asset: InstanceRef): Promise<WorkOrderList>;
+  listForAsset(asset: InstanceRef, scope?: AssetScope): Promise<WorkOrderList>;
 }
 
 class CdmActivityService implements ActivityService {
   constructor(private readonly client: ListInstancesClient) {}
 
-  async listForAsset(asset: InstanceRef): Promise<WorkOrderList> {
-    const { items, hasMore } = await listRelatedNodes(this.client, CDM_VIEWS.activity, asset, SCAN_LIMIT);
+  async listForAsset(asset: InstanceRef, scope?: AssetScope): Promise<WorkOrderList> {
+    const { items, hasMore } = await listRelatedNodes(this.client, CDM_VIEWS.activity, asset, {
+      maxItems: SCAN_LIMIT,
+      includeSubAssets: scope?.includeSubAssets,
+    });
 
     const orders = items.map((item): WorkOrder => {
       const props = viewProps(item, CDM_VIEWS.activity);

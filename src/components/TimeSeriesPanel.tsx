@@ -57,7 +57,7 @@ export function TimeSeriesPanel() {
 
         {vm.listStatus === 'success' && vm.series.length > 0 && (
           <div className="grid gap-6 lg:grid-cols-[minmax(220px,1fr)_2fr]">
-            <CheckboxGroup aria-label="Time series to plot" className="max-h-96 overflow-y-auto">
+            <CheckboxGroup aria-label="Time series to plot" className="max-h-96 self-start overflow-y-auto">
               {vm.series.map((series) => (
                 <CheckboxItem key={refKey(series.ref)}>
                   <CheckboxItemControl

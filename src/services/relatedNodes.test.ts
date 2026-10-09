@@ -24,6 +24,38 @@ describe(listRelatedNodes.name, () => {
     });
   });
 
+  it('also matches items linked to descendants when includeSubAssets is set', async () => {
+    const client = makeClient({ items: [] });
+
+    await listRelatedNodes(client, CDM_VIEWS.timeSeries, ref(), { includeSubAssets: true });
+
+    expect(client.instances.list).toHaveBeenCalledWith(
+      expect.objectContaining({
+        filter: {
+          or: [
+            {
+              containsAny: {
+                property: ['cdf_cdm', 'CogniteTimeSeries/v1', 'assets'],
+                values: [{ space: 'sp', externalId: 'a1' }],
+              },
+            },
+            {
+              nested: {
+                scope: ['cdf_cdm', 'CogniteTimeSeries/v1', 'assets'],
+                filter: {
+                  containsAny: {
+                    property: ['cdf_cdm', 'CogniteAsset/v1', 'path'],
+                    values: [{ space: 'sp', externalId: 'a1' }],
+                  },
+                },
+              },
+            },
+          ],
+        },
+      })
+    );
+  });
+
   it('reports whether more items exist beyond the limit', async () => {
     const full = Array.from({ length: RELATED_LIMIT }, () => makeNode());
     const more = await listRelatedNodes(makeClient({ items: full, nextCursor: 'c' }), CDM_VIEWS.file, ref());
@@ -40,7 +72,7 @@ describe(listRelatedNodes.name, () => {
       .mockResolvedValueOnce({ items: [node, node], nextCursor: 'c1' })
       .mockResolvedValueOnce({ items: [node], nextCursor: 'c2' });
 
-    const result = await listRelatedNodes({ instances: { list } }, CDM_VIEWS.activity, ref(), 3);
+    const result = await listRelatedNodes({ instances: { list } }, CDM_VIEWS.activity, ref(), { maxItems: 3 });
 
     expect(list).toHaveBeenCalledTimes(2);
     expect(list).toHaveBeenNthCalledWith(1, expect.objectContaining({ limit: 3 }));
@@ -54,7 +86,7 @@ describe(listRelatedNodes.name, () => {
       .mockResolvedValueOnce({ items: [makeNode()], nextCursor: 'c1' })
       .mockResolvedValueOnce({ items: [makeNode()] });
 
-    const result = await listRelatedNodes({ instances: { list } }, CDM_VIEWS.activity, ref(), 500);
+    const result = await listRelatedNodes({ instances: { list } }, CDM_VIEWS.activity, ref(), { maxItems: 500 });
 
     expect(list).toHaveBeenCalledTimes(2);
     expect(result).toEqual({ items: [makeNode(), makeNode()], hasMore: false });
@@ -66,7 +98,7 @@ describe(listRelatedNodes.name, () => {
       .mockResolvedValueOnce({ items: [], nextCursor: 'c1' })
       .mockResolvedValueOnce({ items: [makeNode()] });
 
-    const result = await listRelatedNodes({ instances: { list } }, CDM_VIEWS.activity, ref(), 500);
+    const result = await listRelatedNodes({ instances: { list } }, CDM_VIEWS.activity, ref(), { maxItems: 500 });
 
     expect(list).toHaveBeenCalledTimes(2);
     expect(result).toEqual({ items: [makeNode()], hasMore: false });
@@ -75,7 +107,7 @@ describe(listRelatedNodes.name, () => {
   it('gives up after 20 requests if the cursor never ends', async () => {
     const list = vi.fn<ListInstancesClient['instances']['list']>(() => Promise.resolve({ items: [], nextCursor: 'c' }));
 
-    const result = await listRelatedNodes({ instances: { list } }, CDM_VIEWS.activity, ref(), 500);
+    const result = await listRelatedNodes({ instances: { list } }, CDM_VIEWS.activity, ref(), { maxItems: 500 });
 
     expect(list).toHaveBeenCalledTimes(20);
     expect(result).toEqual({ items: [], hasMore: true });
