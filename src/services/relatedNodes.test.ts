@@ -60,12 +60,24 @@ describe(listRelatedNodes.name, () => {
     expect(result).toEqual({ items: [makeNode(), makeNode()], hasMore: false });
   });
 
-  it('stops on an empty page even if CDF returns a cursor', async () => {
+  it('keeps reading past empty pages while CDF returns a cursor', async () => {
+    const list = vi
+      .fn<ListInstancesClient['instances']['list']>()
+      .mockResolvedValueOnce({ items: [], nextCursor: 'c1' })
+      .mockResolvedValueOnce({ items: [makeNode()] });
+
+    const result = await listRelatedNodes({ instances: { list } }, CDM_VIEWS.activity, ref(), 500);
+
+    expect(list).toHaveBeenCalledTimes(2);
+    expect(result).toEqual({ items: [makeNode()], hasMore: false });
+  });
+
+  it('gives up after 20 requests if the cursor never ends', async () => {
     const list = vi.fn<ListInstancesClient['instances']['list']>(() => Promise.resolve({ items: [], nextCursor: 'c' }));
 
     const result = await listRelatedNodes({ instances: { list } }, CDM_VIEWS.activity, ref(), 500);
 
-    expect(list).toHaveBeenCalledOnce();
+    expect(list).toHaveBeenCalledTimes(20);
     expect(result).toEqual({ items: [], hasMore: true });
   });
 

@@ -10,6 +10,12 @@ export const RELATED_LIMIT = 100;
 /** DMS list page size limit. */
 const MAX_PAGE_SIZE = 1000;
 
+/**
+ * Filtered DMS lists may return short or even empty pages together with a cursor, so page
+ * size says nothing about "done". Cap the number of requests instead to rule out endless loops.
+ */
+const MAX_PAGES = 20;
+
 export type RelatedNodes = { items: NodeOrEdge[]; hasMore: boolean };
 
 /**
@@ -25,6 +31,7 @@ export async function listRelatedNodes(
 ): Promise<RelatedNodes> {
   const items: NodeOrEdge[] = [];
   let cursor: string | undefined;
+  let pages = 0;
 
   do {
     const response = await client.instances.list({
@@ -41,9 +48,8 @@ export async function listRelatedNodes(
     });
     items.push(...response.items);
     cursor = response.nextCursor ?? undefined;
-    // Guard against a cursor that never advances: an empty page ends the scan.
-    if (response.items.length === 0) break;
-  } while (cursor && items.length < maxItems);
+    pages += 1;
+  } while (cursor && items.length < maxItems && pages < MAX_PAGES);
 
   return { items, hasMore: cursor !== undefined };
 }
