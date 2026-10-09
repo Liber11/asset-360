@@ -3,11 +3,13 @@ import { createContext, useContext } from 'react';
 import type { ActivityService } from './ActivityService';
 import type { AssetService } from './AssetService';
 import type { RecentAssetsStore } from './RecentAssetsStore';
+import type { TimeSeriesService } from './TimeSeriesService';
 
 /** Everything view models need from the outside world; replaced with fakes in tests. */
 export type Services = {
   assetService: AssetService;
   activityService: ActivityService;
+  timeSeriesService: TimeSeriesService;
   recentAssetsStore: RecentAssetsStore;
 };
 

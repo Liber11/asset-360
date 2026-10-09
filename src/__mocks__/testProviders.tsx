@@ -7,6 +7,7 @@ import type { ActivityService } from '../services/ActivityService';
 import type { AssetDetails, AssetService, AssetSummary } from '../services/AssetService';
 import type { RecentAsset, RecentAssetsStore } from '../services/RecentAssetsStore';
 import { ServicesContext, type Services } from '../services/ServicesContext';
+import type { TimeSeriesService } from '../services/TimeSeriesService';
 import { WorkspaceStateProvider } from '../state/WorkspaceStateProvider';
 
 export function makeAssetService(overrides: Partial<AssetService> = {}): AssetService {
@@ -20,6 +21,15 @@ export function makeAssetService(overrides: Partial<AssetService> = {}): AssetSe
 export function makeActivityService(overrides: Partial<ActivityService> = {}): ActivityService {
   return {
     listForAsset: vi.fn(() => Promise.resolve({ items: [], hasMore: false })),
+    ...overrides,
+  };
+}
+
+export function makeTimeSeriesService(overrides: Partial<TimeSeriesService> = {}): TimeSeriesService {
+  return {
+    listForAsset: vi.fn(() => Promise.resolve({ items: [], hasMore: false })),
+    getLatest: vi.fn(() => Promise.resolve(new Map())),
+    getDatapoints: vi.fn(() => Promise.resolve(new Map())),
     ...overrides,
   };
 }
@@ -39,6 +49,7 @@ export function makeServices(overrides: Partial<Services> = {}): Services {
   return {
     assetService: makeAssetService(),
     activityService: makeActivityService(),
+    timeSeriesService: makeTimeSeriesService(),
     recentAssetsStore: makeRecentAssetsStore(),
     ...overrides,
   };

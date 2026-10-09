@@ -9,6 +9,7 @@ import { useWorkspaceViewModel } from '../viewmodels/useWorkspaceViewModel';
 import { AssetHeader } from './AssetHeader';
 import { AssetSearch } from './AssetSearch';
 import { RecentAssets } from './RecentAssets';
+import { TimeSeriesPanel } from './TimeSeriesPanel';
 import { WorkOrdersPanel } from './WorkOrdersPanel';
 
 /** Top-level layout: start screen (search + recent) or the 360 view of the selected asset. */
@@ -23,6 +24,7 @@ export function Workspace() {
         {hasSelectedAsset ? (
           <>
             <AssetHeader />
+            <TimeSeriesPanel />
             <WorkOrdersPanel />
           </>
         ) : (

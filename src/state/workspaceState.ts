@@ -33,7 +33,7 @@ export function isInstanceRef(value: unknown): value is InstanceRef {
   );
 }
 
-function isTimeRangeKey(value: unknown): value is TimeRangeKey {
+export function isTimeRangeKey(value: unknown): value is TimeRangeKey {
   return TIME_RANGE_KEYS.some((key) => key === value);
 }
 

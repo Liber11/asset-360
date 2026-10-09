@@ -6,6 +6,7 @@ import { createActivityService } from './ActivityService';
 import { createAssetService } from './AssetService';
 import { createRecentAssetsStore } from './RecentAssetsStore';
 import { ServicesContext, type Services } from './ServicesContext';
+import { createTimeSeriesService } from './TimeSeriesService';
 
 type ServicesProviderProps = { storage: Pick<Storage, 'getItem' | 'setItem'>; children: ReactNode };
 
@@ -16,6 +17,7 @@ export function ServicesProvider({ storage, children }: ServicesProviderProps) {
     () => ({
       assetService: createAssetService(client),
       activityService: createActivityService(client),
+      timeSeriesService: createTimeSeriesService(client),
       recentAssetsStore: createRecentAssetsStore(storage),
     }),
     [client, storage]
