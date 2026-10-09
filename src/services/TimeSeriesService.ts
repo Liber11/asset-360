@@ -29,7 +29,7 @@ export interface TimeSeriesService {
 }
 
 export type TimeSeriesClient = {
-  instances: Pick<CogniteClient['instances'], 'list' | 'retrieve'>;
+  instances: Pick<CogniteClient['instances'], 'list' | 'search' | 'retrieve'>;
   datapoints: Pick<CogniteClient['datapoints'], 'retrieve' | 'retrieveLatest'>;
 };
 

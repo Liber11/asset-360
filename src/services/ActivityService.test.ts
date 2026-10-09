@@ -71,7 +71,7 @@ describe('ActivityService', () => {
       .mockResolvedValueOnce({ items: page1, nextCursor: 'page-2' })
       .mockResolvedValueOnce({ items: page2 });
 
-    const result = await createActivityService({ instances: { list } }).listForAsset({ space: 'sp', externalId: 'a1' });
+    const result = await createActivityService({ instances: { list, search: vi.fn() } }).listForAsset({ space: 'sp', externalId: 'a1' });
 
     expect(list).toHaveBeenCalledTimes(2);
     expect(list).toHaveBeenLastCalledWith(expect.objectContaining({ cursor: 'page-2' }));
@@ -86,7 +86,7 @@ describe('ActivityService', () => {
 
     await createActivityService(client).listForAsset({ space: 'sp', externalId: 'a1' }, { includeSubAssets: true });
 
-    expect(client.instances.list).toHaveBeenCalledWith(
+    expect(client.instances.search).toHaveBeenCalledWith(
       expect.objectContaining({ filter: expect.objectContaining({ or: expect.any(Array) }) })
     );
   });
@@ -102,7 +102,12 @@ describe('ActivityService', () => {
 });
 
 function makeClient(items: NodeOrEdge[]): ListInstancesClient {
-  return { instances: { list: vi.fn<ListInstancesClient['instances']['list']>(() => Promise.resolve({ items })) } };
+  return {
+    instances: {
+      list: vi.fn<ListInstancesClient['instances']['list']>(() => Promise.resolve({ items })),
+      search: vi.fn<ListInstancesClient['instances']['search']>(() => Promise.resolve({ items })),
+    },
+  };
 }
 
 function activity(externalId: string, props: Record<string, unknown>): NodeOrEdge {

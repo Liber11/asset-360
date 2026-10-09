@@ -3,12 +3,12 @@ import type { CogniteClient, FilterDefinition, NodeOrEdge, ViewReference } from 
 import { CDM_VIEWS } from '../domain/cdm';
 import type { InstanceRef } from '../state/workspaceState';
 
-export type ListInstancesClient = { instances: Pick<CogniteClient['instances'], 'list'> };
+export type ListInstancesClient = { instances: Pick<CogniteClient['instances'], 'list' | 'search'> };
 
 /** Per-panel cap (FR-015) so assets with many related items do not freeze the page. */
 export const RELATED_LIMIT = 100;
 
-/** DMS list page size limit. */
+/** DMS page size limit (list), and the maximum result size of the search endpoint. */
 const MAX_PAGE_SIZE = 1000;
 
 /**
@@ -64,6 +64,15 @@ export async function listRelatedNodes(
   { maxItems = RELATED_LIMIT, includeSubAssets = false }: RelatedOptions = {}
 ): Promise<RelatedNodes> {
   const filter = relatedFilter(view, asset, includeSubAssets);
+
+  if (includeSubAssets) {
+    // The nested `assets → path` filter is only accepted by the search endpoint (not by list),
+    // see docs: dm_search → "Nested filters are only supported for core data model assets".
+    // Search has no cursor, so one request of at most MAX_PAGE_SIZE items.
+    const limit = Math.min(maxItems, MAX_PAGE_SIZE);
+    const { items } = await client.instances.search({ view, instanceType: 'node', limit, filter });
+    return { items, hasMore: items.length >= limit };
+  }
   const items: NodeOrEdge[] = [];
   let cursor: string | undefined;
   let pages = 0;

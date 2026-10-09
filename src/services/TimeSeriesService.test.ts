@@ -7,6 +7,7 @@ import { createTimeSeriesService, type TimeSeriesClient } from './TimeSeriesServ
 
 type Mocked = {
   list: ReturnType<typeof vi.fn<TimeSeriesClient['instances']['list']>>;
+  search: ReturnType<typeof vi.fn<TimeSeriesClient['instances']['search']>>;
   retrieve: ReturnType<typeof vi.fn<TimeSeriesClient['instances']['retrieve']>>;
   dpRetrieve: ReturnType<typeof vi.fn<TimeSeriesClient['datapoints']['retrieve']>>;
   latest: ReturnType<typeof vi.fn<TimeSeriesClient['datapoints']['retrieveLatest']>>;
@@ -19,12 +20,13 @@ describe('TimeSeriesService', () => {
   beforeEach(() => {
     mocks = {
       list: vi.fn<TimeSeriesClient['instances']['list']>(() => Promise.resolve({ items: [] })),
+      search: vi.fn<TimeSeriesClient['instances']['search']>(() => Promise.resolve({ items: [] })),
       retrieve: vi.fn<TimeSeriesClient['instances']['retrieve']>(() => Promise.resolve({ items: [] })),
       dpRetrieve: vi.fn<TimeSeriesClient['datapoints']['retrieve']>(() => Promise.resolve([])),
       latest: vi.fn<TimeSeriesClient['datapoints']['retrieveLatest']>(() => Promise.resolve([])),
     };
     client = {
-      instances: { list: mocks.list, retrieve: mocks.retrieve },
+      instances: { list: mocks.list, search: mocks.search, retrieve: mocks.retrieve },
       datapoints: { retrieve: mocks.dpRetrieve, retrieveLatest: mocks.latest },
     };
   });
@@ -58,7 +60,7 @@ describe('TimeSeriesService', () => {
     it('passes the sub-asset scope to the query', async () => {
       await createTimeSeriesService(client).listForAsset({ space: 'sp', externalId: 'a1' }, { includeSubAssets: true });
 
-      expect(mocks.list).toHaveBeenCalledWith(
+      expect(mocks.search).toHaveBeenCalledWith(
         expect.objectContaining({ filter: expect.objectContaining({ or: expect.any(Array) }) })
       );
     });
