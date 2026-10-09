@@ -51,7 +51,7 @@ Plan de construcción (Step 5), una etapa = un commit:
 
 1. Bases (estado en la URL, errores) ✅
 2. Búsqueda + encabezado + recientes ✅ — probado con datos reales
-3. Órdenes de trabajo ✅ en código — **pendiente probar con datos reales**
+3. Órdenes de trabajo ✅ — probado con datos reales (y corregido el orden)
 4. Series de tiempo con gráfico
 5. Documentos con vista previa
 6. Diseño final de la página
@@ -65,9 +65,19 @@ Plan de construcción (Step 5), una etapa = un commit:
 - El **tag del equipo** (ej. `23-PC-9109`) está en el **nombre** del activo. El identificador interno (`externalId`) lleva un prefijo: `WMT:23-PC-9109`.
 - Todo se lee del **Core Data Model** de Cognite, en el space `cdf_cdm`: `CogniteAsset`, `CogniteTimeSeries`, `CogniteActivity` (órdenes de trabajo), `CogniteFile` (documentos).
 - Las series, órdenes y documentos "apuntan" al activo mediante su propiedad `assets`.
+- Tamaño del proyecto (buscador de Fusion, sin texto): **1.103 activos, 363 series de tiempo, 2.850 actividades (órdenes de trabajo), 15 archivos**.
+- Las órdenes de trabajo son **viejas** (2018–2019), tienen IDs tipo `FAO-143796` y nombres en **noruego** (`VEDLIKEHOLD` = mantenimiento).
+- Un activo puede tener **más de 100 órdenes** (ej. `23-PC-9109`).
+
+### No confundir: buscador de Fusion vs. tu app
+- **"Buscar"** en el menú izquierdo de Fusion es el buscador general de Cognite, no tu app.
+- Sus contadores por categoría (Asset, Activity, File…) cuentan elementos cuyo **texto coincide** con la búsqueda, **no** los que están ligados al activo.
+- Con el buscador **vacío** muestran el total del proyecto: sirve para saber si un tipo de dato existe.
+- Tu app está en **"Aplicaciones personalizadas"**, en modo desarrollo, con la dirección de la sección 1.
 
 ### Sobre revisar lo que produce el asistente (lo pide la guía)
 - El SPEC de referencia de la guía menciona un **"status"** de las órdenes de trabajo, pero `CogniteActivity` **no tiene esa propiedad** en la documentación oficial. Siempre verifica vistas y propiedades contra la documentación (Cognite Docs MCP), no de memoria.
+- **Error que encontramos probando con datos reales:** el panel decía "las 100 órdenes más recientes", pero CDF devolvía las primeras 100 **en su orden interno**, no por fecha. Se corrigió leyendo todas las órdenes del activo (hasta 1.000), ordenándolas y quedándose con las 100 más recientes. Lección: un texto en pantalla también puede "mentir"; hay que verificarlo con datos reales.
 - El primer borrador del gráfico usaba "últimos 7 días desde hoy". Con datos de demo, que pueden ser viejos, el gráfico habría salido vacío. Se corrigió: la ventana de tiempo termina en el **último dato disponible**.
 
 ### Decisiones de diseño
