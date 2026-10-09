@@ -7,11 +7,13 @@ import { Alert, AlertDescription } from '@cognite/aura/components/alert';
 import { Card, CardContent } from '@cognite/aura/components/card';
 import { Loader } from '@cognite/aura/components/loader';
 import { useEffect, useState } from 'react';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 import { AppErrorBoundary } from './components/AppErrorBoundary';
 import { Workspace } from './components/Workspace';
 import { HostApiContext, type HostApi } from './host/HostApiContext';
+import { ServicesContext, type Services } from './services/ServicesContext';
+import { ServicesProvider } from './services/ServicesProvider';
 import { WorkspaceStateProvider } from './state/WorkspaceStateProvider';
 
 type AppConnectResult = { api: HostApi; initialState?: string };
@@ -50,12 +52,20 @@ type AppProps = {
   deps?: ComponentProps<typeof CogniteSdkProvider>['deps'];
   connectToHostApp?: () => Promise<AppConnectResult>;
   onReload?: () => void;
+  /** Overrides the CDF-backed services (tests). */
+  services?: Services;
 };
+
+function AppServices({ services, children }: { services?: Services; children: ReactNode }) {
+  if (services) return <ServicesContext.Provider value={services}>{children}</ServicesContext.Provider>;
+  return <ServicesProvider storage={window.localStorage}>{children}</ServicesProvider>;
+}
 
 function App({
   deps,
   connectToHostApp = deps?.connectToHostApp ?? connectToHostAppImpl,
   onReload = () => window.location.reload(),
+  services,
 }: AppProps) {
   const [connection, setConnection] = useState<Connection>({ status: 'pending' });
 
@@ -80,11 +90,13 @@ function App({
       {connection.status === 'failed' && errorFallback}
       {connection.status === 'ready' && (
         <HostApiContext.Provider value={connection.api}>
-          <WorkspaceStateProvider initialState={connection.initialState}>
-            <AppErrorBoundary onReload={onReload}>
-              <Workspace />
-            </AppErrorBoundary>
-          </WorkspaceStateProvider>
+          <AppServices services={services}>
+            <WorkspaceStateProvider initialState={connection.initialState}>
+              <AppErrorBoundary onReload={onReload}>
+                <Workspace />
+              </AppErrorBoundary>
+            </WorkspaceStateProvider>
+          </AppServices>
         </HostApiContext.Provider>
       )}
     </CogniteSdkProvider>
