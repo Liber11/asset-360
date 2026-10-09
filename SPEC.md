@@ -91,7 +91,11 @@ report or alarm.
   selected, the default time window MUST end at the latest datapoint of the selected
   series, not at wall-clock time, because historian data may be stale.
 - FR-006: Users MUST be able to add or remove plotted series and change the time range
-  without leaving the 360 view. Large ranges MUST use aggregates.
+  (1D, 7D, 30D, 1Y) without leaving the 360 view. Large ranges MUST use aggregates
+  (average). Each selected series is plotted in its own small chart with its own y-axis
+  and a text summary (latest value, min and max in the window); series with different
+  units are never drawn on a shared or dual axis. Non-numeric series are listed but
+  cannot be selected.
 - FR-006a: When a selected series has no datapoints, the chart MUST show a clear empty
   state for it instead of an empty axis or an error.
 - FR-006b: The chart MUST NOT auto-poll or stream. A manual refresh control MUST
