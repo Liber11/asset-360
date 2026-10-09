@@ -10,7 +10,7 @@
       "project": "publicdatacdm",
       "baseUrl": "https://api.cognitedata.com",
       "deployClientId": "",
-      "deploySecretName": "PUBLICDATA_PUBLICDATACDM_HTTPS://API.COGNITEDATA.COM"
+      "deploySecretName": "PUBLICDATA_PUBLICDATACDM_API"
     }
   ]
 }
