@@ -156,9 +156,10 @@ report or alarm.
   a work order status. The `publicdatacdm` project may also hold `CogniteMaintenanceOrder`
   instances (which do have a status); supporting those is out of scope for v1 and should
   be revisited after checking the live data.
-- `CogniteAsset` has no dedicated "tag" property; v1 uses `externalId` as the identifier
-  and searches `name`, `description`, and `aliases`. This should be checked against the
-  live data.
+- `CogniteAsset` has no dedicated "tag" property. Checked against live `publicdatacdm`
+  data: the equipment tag is the asset `name` (e.g. `23-PC-9109`) and `externalId` carries
+  a source prefix (e.g. `WMT:23-PC-9109`). v1 shows `name` as the title, `externalId` as
+  the identifier, and searches `name`, `description`, and `aliases`.
 
 ## Assumptions
 
