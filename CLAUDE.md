@@ -297,3 +297,31 @@ Use [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/
 - Before committing: review **`git status`** and **`git diff`** (including staged); unstage and commit separately if the index mixes unrelated concerns.
 
 ---
+## 10. Project notes (asset-360)
+
+Facts learned while building this app. Human-facing procedures (in Spanish) live in `conocimiento.md`.
+
+### Data in `publicdatacdm` (verified against live data)
+
+- Views are read from the `cdf_cdm` system space, version `v1` (`CDM_VIEWS` in `src/domain/cdm.ts`). Do not hard-code instance spaces.
+- The equipment tag is the asset `name` (e.g. `23-PC-9109`); `externalId` carries a source prefix (e.g. `WMT:23-PC-9109`).
+- `CogniteAsset.path` is populated, so the ancestor breadcrumb works from the root (`VAL / 23 / 230900 / …`).
+- `CogniteActivity` has no `status` property; do not invent one (see SPEC.md → Clarifications).
+
+### Code patterns already in place — reuse them
+
+- **Host-synced state:** add new URL-worthy fields to `WorkspaceState` in `src/state/workspaceState.ts` (type + default + type-guarded parse + test). Read/write through `useWorkspaceState()`.
+- **Services:** each service exposes an interface plus a `create*Service(client)` factory; the class stays private to its file. Register new services in `ServicesContext.ts`, `ServicesProvider.tsx`, and the fakes in `src/__mocks__/testProviders.tsx`.
+- **Items linked to an asset** (time series, activities, files): use `listRelatedNodes()` in `src/services/relatedNodes.ts` (`containsAny` on the view's `assets` property, capped at `RELATED_LIMIT`).
+- **CDM property reads:** use `viewProps` / `readString` / `readRef` / … from `src/domain/cdm.ts`; never cast with `as`.
+- **Panel states:** use `toLoadStatus()` + `<PanelStatus>` for loading / error / no-access.
+
+### Testing gotchas
+
+- Aura `DataGrid` is virtualized; happy-dom has no layout, so it renders zero rows. Call `stubLayoutSize()` from `src/__mocks__/layout.ts` in `beforeEach` and `vi.restoreAllMocks()` in `afterEach`. The grid's role is `table`, not `grid`.
+- Render with `makeProviders({ services, initialState })` from `src/__mocks__/testProviders.tsx`; it sets up React Query (no retries), the host API fake, services, and workspace state.
+
+### Workflow with the user
+
+- The user runs `npm run dev` in their own PowerShell window and checks changes in Fusion development mode; ask for a screenshot to verify anything that depends on live CDF data.
+- Each build stage ends with lint + tests + build green and one conventional commit.
