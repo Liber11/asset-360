@@ -40,6 +40,7 @@ describe(parseWorkspaceState.name, () => {
       query: 'pump',
       selectedSeries: [{ space: 'sp', externalId: 'ts-1' }],
       range: '30d',
+      openWorkOrder: { space: 'sp', externalId: 'wo-1' },
     };
 
     expect(parseWorkspaceState(JSON.stringify(saved))).toEqual(saved);
@@ -51,6 +52,7 @@ describe(parseWorkspaceState.name, () => {
       query: 7,
       selectedSeries: [{ space: 'sp', externalId: 'ok' }, 'bad'],
       range: '5y',
+      openWorkOrder: 'wo-1',
     });
 
     expect(parseWorkspaceState(raw)).toEqual({

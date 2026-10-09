@@ -2,6 +2,7 @@ import { useCogniteSdk } from '@cognite/app-sdk/react';
 import { useMemo } from 'react';
 import type { ReactNode } from 'react';
 
+import { createActivityService } from './ActivityService';
 import { createAssetService } from './AssetService';
 import { createRecentAssetsStore } from './RecentAssetsStore';
 import { ServicesContext, type Services } from './ServicesContext';
@@ -14,6 +15,7 @@ export function ServicesProvider({ storage, children }: ServicesProviderProps) {
   const services = useMemo<Services>(
     () => ({
       assetService: createAssetService(client),
+      activityService: createActivityService(client),
       recentAssetsStore: createRecentAssetsStore(storage),
     }),
     [client, storage]

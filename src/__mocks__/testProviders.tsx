@@ -3,6 +3,7 @@ import type { ComponentType, ReactNode } from 'react';
 import { assert, vi } from 'vitest';
 
 import { HostApiContext, type HostApi } from '../host/HostApiContext';
+import type { ActivityService } from '../services/ActivityService';
 import type { AssetDetails, AssetService, AssetSummary } from '../services/AssetService';
 import type { RecentAsset, RecentAssetsStore } from '../services/RecentAssetsStore';
 import { ServicesContext, type Services } from '../services/ServicesContext';
@@ -12,6 +13,13 @@ export function makeAssetService(overrides: Partial<AssetService> = {}): AssetSe
   return {
     search: vi.fn(() => assert.fail('search not expected')),
     retrieve: vi.fn(() => assert.fail('retrieve not expected')),
+    ...overrides,
+  };
+}
+
+export function makeActivityService(overrides: Partial<ActivityService> = {}): ActivityService {
+  return {
+    listForAsset: vi.fn(() => Promise.resolve({ items: [], hasMore: false })),
     ...overrides,
   };
 }
@@ -30,6 +38,7 @@ export function makeRecentAssetsStore(initial: RecentAsset[] = []): RecentAssets
 export function makeServices(overrides: Partial<Services> = {}): Services {
   return {
     assetService: makeAssetService(),
+    activityService: makeActivityService(),
     recentAssetsStore: makeRecentAssetsStore(),
     ...overrides,
   };

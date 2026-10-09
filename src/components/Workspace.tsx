@@ -9,6 +9,7 @@ import { useWorkspaceViewModel } from '../viewmodels/useWorkspaceViewModel';
 import { AssetHeader } from './AssetHeader';
 import { AssetSearch } from './AssetSearch';
 import { RecentAssets } from './RecentAssets';
+import { WorkOrdersPanel } from './WorkOrdersPanel';
 
 /** Top-level layout: start screen (search + recent) or the 360 view of the selected asset. */
 export function Workspace() {
@@ -20,7 +21,10 @@ export function Workspace() {
         <h1 className="text-2xl font-semibold">Asset 360</h1>
 
         {hasSelectedAsset ? (
-          <AssetHeader />
+          <>
+            <AssetHeader />
+            <WorkOrdersPanel />
+          </>
         ) : (
           <>
             <AssetSearch />

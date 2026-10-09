@@ -29,7 +29,7 @@ export function useAssetHeaderViewModel(): AssetHeaderViewModel {
 
   const { refetch } = query;
   const retry = useCallback(() => void refetch(), [refetch]);
-  const close = useCallback(() => update({ selectedAsset: null, selectedSeries: [] }), [update]);
+  const close = useCallback(() => update({ selectedAsset: null, selectedSeries: [], openWorkOrder: null }), [update]);
 
   const status = toLoadStatus(query);
 

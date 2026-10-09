@@ -10,6 +10,8 @@ export type WorkspaceState = {
   query: string;
   selectedSeries: InstanceRef[];
   range: TimeRangeKey;
+  /** Work order whose detail dialog is open. */
+  openWorkOrder: InstanceRef | null;
 };
 
 export const DEFAULT_WORKSPACE_STATE: WorkspaceState = {
@@ -17,6 +19,7 @@ export const DEFAULT_WORKSPACE_STATE: WorkspaceState = {
   query: '',
   selectedSeries: [],
   range: '7d',
+  openWorkOrder: null,
 };
 
 export function isInstanceRef(value: unknown): value is InstanceRef {
@@ -51,12 +54,14 @@ export function parseWorkspaceState(raw: string | undefined): WorkspaceState {
   const query = 'query' in parsed ? parsed.query : undefined;
   const selectedSeries = 'selectedSeries' in parsed ? parsed.selectedSeries : undefined;
   const range = 'range' in parsed ? parsed.range : undefined;
+  const openWorkOrder = 'openWorkOrder' in parsed ? parsed.openWorkOrder : undefined;
 
   return {
     selectedAsset: isInstanceRef(selectedAsset) ? selectedAsset : DEFAULT_WORKSPACE_STATE.selectedAsset,
     query: typeof query === 'string' ? query : DEFAULT_WORKSPACE_STATE.query,
     selectedSeries: Array.isArray(selectedSeries) ? selectedSeries.filter(isInstanceRef) : [],
     range: isTimeRangeKey(range) ? range : DEFAULT_WORKSPACE_STATE.range,
+    openWorkOrder: isInstanceRef(openWorkOrder) ? openWorkOrder : DEFAULT_WORKSPACE_STATE.openWorkOrder,
   };
 }
 
