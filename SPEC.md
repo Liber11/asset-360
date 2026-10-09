@@ -67,6 +67,10 @@ report or alarm.
 - Given the analyst has opened at least one asset on this device, when they return to the
   start screen, then they see up to 10 recently viewed assets and can open any of them in
   one click.
+- Given an equipment asset (e.g. a pump) whose sensors are linked to its instrument
+  sub-assets, when "Include sub-assets" is on, then the time series panel lists the
+  instruments' series; when it is turned off, only series linked to the pump itself
+  are listed.
 - Given an uncaught render error happens outside a panel, then an app-level error
   boundary shows a recovery action (reload) instead of a blank screen.
 
@@ -129,6 +133,10 @@ report or alarm.
   horizontal scrolling.
 - FR-017: Routed app content MUST be wrapped in an app-level error boundary with a
   reload action.
+- FR-018: The asset header MUST offer an "Include sub-assets" switch, on by default and
+  host-synced. When on, the time series, work orders, and documents panels also list
+  items linked to any asset below the selected one in the hierarchy (via the linked
+  asset's `path`); when off, only items linked directly to the selected asset.
 
 ## Success Criteria
 
@@ -155,6 +163,11 @@ report or alarm.
 - The chart refreshes only on manual refresh; no auto-polling or streaming.
 - Recently viewed assets live in browser-local storage per device (last 10). This is a
   per-device convenience, so it is not host-synced. The selected asset is host-synced.
+- Checked against live `publicdatacdm` data: time series are linked to instrument
+  assets (e.g. `23-PT-92532`, a pressure transmitter) rather than to the equipment
+  above them (e.g. the pump `23-PC-9109`, which has none directly). This is why
+  FR-018 includes sub-assets by default. Their latest datapoints are months old
+  (e.g. 2026-03-14), confirming the latest-datapoint anchoring of FR-005.
 - Inline preview is limited to PDFs and PNG/JPEG/GIF/WEBP images in v1.
 - `CogniteActivity` has no `status` property in the core data model, so v1 does not show
   a work order status. The `publicdatacdm` project may also hold `CogniteMaintenanceOrder`

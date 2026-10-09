@@ -307,12 +307,14 @@ Facts learned while building this app. Human-facing procedures (in Spanish) live
 - The equipment tag is the asset `name` (e.g. `23-PC-9109`); `externalId` carries a source prefix (e.g. `WMT:23-PC-9109`).
 - `CogniteAsset.path` is populated, so the ancestor breadcrumb works from the root (`VAL / 23 / 230900 / …`).
 - `CogniteActivity` has no `status` property; do not invent one (see SPEC.md → Clarifications).
+- Time series hang off instrument assets (e.g. `23-PT-92532`), not the equipment above them; panels include sub-assets by default (FR-018) via a `nested` filter on `assets → CogniteAsset.path`.
+- Filtered DMS `instances.list` can return short or empty pages with a `nextCursor`; never treat page size as "done". `listRelatedNodes` caps requests instead.
 
 ### Code patterns already in place — reuse them
 
 - **Host-synced state:** add new URL-worthy fields to `WorkspaceState` in `src/state/workspaceState.ts` (type + default + type-guarded parse + test). Read/write through `useWorkspaceState()`.
 - **Services:** each service exposes an interface plus a `create*Service(client)` factory; the class stays private to its file. Register new services in `ServicesContext.ts`, `ServicesProvider.tsx`, and the fakes in `src/__mocks__/testProviders.tsx`.
-- **Items linked to an asset** (time series, activities, files): use `listRelatedNodes()` in `src/services/relatedNodes.ts` (`containsAny` on the view's `assets` property, capped at `RELATED_LIMIT`).
+- **Items linked to an asset** (time series, activities, files): use `listRelatedNodes()` in `src/services/relatedNodes.ts` (`containsAny` on the view's `assets` property, optional `includeSubAssets`, capped at `RELATED_LIMIT`). Pass the workspace's `includeSubAssets` and include it in the React Query key.
 - **CDM property reads:** use `viewProps` / `readString` / `readRef` / … from `src/domain/cdm.ts`; never cast with `as`.
 - **Panel states:** use `toLoadStatus()` + `<PanelStatus>` for loading / error / no-access.
 

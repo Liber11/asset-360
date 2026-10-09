@@ -52,7 +52,7 @@ Plan de construcción (Step 5), una etapa = un commit:
 1. Bases (estado en la URL, errores) ✅
 2. Búsqueda + encabezado + recientes ✅ — probado con datos reales
 3. Órdenes de trabajo ✅ — probado con datos reales (y corregido el orden)
-4. Series de tiempo con gráfico
+4. Series de tiempo con gráfico ✅ — probado con datos reales; se agregó "Include sub-assets"
 5. Documentos con vista previa
 6. Diseño final de la página
 
@@ -67,7 +67,9 @@ Plan de construcción (Step 5), una etapa = un commit:
 - Las series, órdenes y documentos "apuntan" al activo mediante su propiedad `assets`.
 - Tamaño del proyecto (buscador de Fusion, sin texto): **1.103 activos, 363 series de tiempo, 2.850 actividades (órdenes de trabajo), 15 archivos**.
 - Las órdenes de trabajo son **viejas** (2018–2019), tienen IDs tipo `FAO-143796` y nombres en **noruego** (`VEDLIKEHOLD` = mantenimiento).
-- Un activo puede tener **más de 100 órdenes** (ej. `23-PC-9109`).
+- `23-PC-9109` tiene **16 órdenes** de trabajo. Al principio parecían "100+" porque CDF respondía "hay más páginas" aunque no las hubiera; la app ahora lee hasta el final.
+- **Las series de tiempo están ligadas a los instrumentos, no al equipo.** La bomba `23-PC-9109` no tiene series propias; sus sensores cuelgan de activos hijos como `23-PT-92532` (*PT* = transmisor de presión) o `23-TT-92537` (*TT* = transmisor de temperatura). Por eso existe la casilla **"Include sub-assets"** (activada por defecto).
+- El último dato de las series es de **2026-03-14**: con un gráfico anclado a "hoy" saldría vacío.
 
 ### No confundir: buscador de Fusion vs. tu app
 - **"Buscar"** en el menú izquierdo de Fusion es el buscador general de Cognite, no tu app.
@@ -81,7 +83,9 @@ Plan de construcción (Step 5), una etapa = un commit:
 - El primer borrador del gráfico usaba "últimos 7 días desde hoy". Con datos de demo, que pueden ser viejos, el gráfico habría salido vacío. Se corrigió: la ventana de tiempo termina en el **último dato disponible**.
 
 ### Decisiones de diseño
-- **Lo que queda en la URL** (se restaura al recargar o compartir el link): activo abierto, búsqueda, series marcadas, rango de tiempo y orden de trabajo abierta.
+- **Lo que queda en la URL** (se restaura al recargar o compartir el link): activo abierto, búsqueda, series marcadas, rango de tiempo, orden de trabajo abierta e "Include sub-assets".
+- **Un gráfico por serie** ("small multiples"): nunca se mezclan dos unidades distintas en un mismo eje.
+- **"Include sub-assets"** (en el encabezado del activo): los paneles muestran también lo ligado a los activos que cuelgan del abierto. Se puede apagar para ver solo lo del activo.
 - **Lo que queda solo en tu navegador:** la lista "Recently viewed" (últimos 10 activos, por dispositivo).
 - La búsqueda usa el componente `Search` de Aura. La guía sugiere el `Combobox`, pero ese solo filtra una lista fija ya cargada y no puede consultar CDF mientras escribes.
 - Cada panel muestra sus propios estados (cargando, vacío, error con **Retry**, sin acceso). Si uno falla, los demás siguen funcionando.
