@@ -57,6 +57,30 @@ describe('ActivityService', () => {
     ]);
   });
 
+  it('returns the 100 most recent orders even when CDF returns them unordered across pages', async () => {
+    // Regression: the newest order sits on the second page; it must not be cut off by the cap.
+    const page1 = Array.from({ length: 100 }, (_, i) =>
+      activity(`old-${i}`, { endTime: `2018-01-${String((i % 28) + 1).padStart(2, '0')}T00:00:00Z` })
+    );
+    const page2 = [
+      activity('newest', { endTime: '2024-06-01T00:00:00Z' }),
+      ...Array.from({ length: 49 }, (_, i) => activity(`older-${i}`, { endTime: '2017-01-01T00:00:00Z' })),
+    ];
+    const list = vi
+      .fn<ListInstancesClient['instances']['list']>()
+      .mockResolvedValueOnce({ items: page1, nextCursor: 'page-2' })
+      .mockResolvedValueOnce({ items: page2 });
+
+    const result = await createActivityService({ instances: { list } }).listForAsset({ space: 'sp', externalId: 'a1' });
+
+    expect(list).toHaveBeenCalledTimes(2);
+    expect(list).toHaveBeenLastCalledWith(expect.objectContaining({ cursor: 'page-2' }));
+    expect(result.items).toHaveLength(100);
+    expect(result.items[0].ref.externalId).toBe('newest');
+    expect(result.items.some((item) => item.ref.externalId.startsWith('older-'))).toBe(false);
+    expect(result.hasMore).toBe(true);
+  });
+
   it('propagates API errors', async () => {
     const client = makeClient([]);
     vi.mocked(client.instances.list).mockRejectedValue({ status: 403 });
