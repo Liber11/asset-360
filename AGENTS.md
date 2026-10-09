@@ -307,7 +307,7 @@ Facts learned while building this app. Human-facing procedures (in Spanish) live
 - The equipment tag is the asset `name` (e.g. `23-PC-9109`); `externalId` carries a source prefix (e.g. `WMT:23-PC-9109`).
 - `CogniteAsset.path` is populated, so the ancestor breadcrumb works from the root (`VAL / 23 / 230900 / …`).
 - `CogniteActivity` has no `status` property; do not invent one (see SPEC.md → Clarifications).
-- Time series hang off instrument assets (e.g. `23-PT-92532`), not the equipment above them; panels include sub-assets by default (FR-018) via a `nested` filter on `assets → CogniteAsset.path`.
+- Time series hang off instrument assets (e.g. `23-PT-92532`), not the equipment above them; panels include sub-assets by default (FR-018) via a `nested` filter on `assets → CogniteAsset.path`. That filter only works on `instances.search` (max 1000 results, no cursor); `instances.list` rejects nested filters on list direct relations with a 400.
 - Filtered DMS `instances.list` can return short or empty pages with a `nextCursor`; never treat page size as "done". `listRelatedNodes` caps requests instead.
 
 ### Code patterns already in place — reuse them
