@@ -25,4 +25,8 @@ export default defineConfig({
   worker: {
     format: 'es',
   },
+  // Pre-bundling pdfjs-dist breaks the PDF.js worker used by CogniteFileViewer.
+  optimizeDeps: {
+    exclude: ['pdfjs-dist'],
+  },
 });

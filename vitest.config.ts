@@ -11,7 +11,17 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
-      exclude: ['node_modules/', 'dist/', '.claude/', '.agents/', 'vitest.setup.ts', '**/*.config.ts', '**/*.d.ts'],
+      exclude: [
+        'node_modules/',
+        'dist/',
+        '.claude/',
+        '.agents/',
+        'vitest.setup.ts',
+        '**/*.config.ts',
+        '**/*.d.ts',
+        // Vendored from the integrate-file-viewer skill; tested upstream, not by this app.
+        'src/cognite-file-viewer/',
+      ],
     },
   },
 });

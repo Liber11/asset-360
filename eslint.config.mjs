@@ -92,5 +92,17 @@ export default tseslint.config(
       'no-unused-vars': 'off',
       'react-refresh/only-export-components': ['error', { allowConstantExport: true }],
     },
+  },
+  {
+    // Vendored CogniteFileViewer copied verbatim from the integrate-file-viewer skill.
+    // Its "latest value in a ref" pattern trips the React Compiler hook rules; keep the
+    // upstream code as-is instead of rewriting a third-party library.
+    files: ['src/cognite-file-viewer/**/*.{ts,tsx}'],
+    rules: {
+      'react-hooks/refs': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/exhaustive-deps': 'off',
+      'react-refresh/only-export-components': 'off',
+    },
   }
 );
