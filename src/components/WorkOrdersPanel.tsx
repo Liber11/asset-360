@@ -21,11 +21,12 @@ import { PanelStatus } from './PanelStatus';
 const COLUMNS: ColumnDef<WorkOrder>[] = [
   // Wide enough for operation ids such as FAO-141088-020.
   { id: 'identifier', header: 'ID', accessorFn: (order) => order.identifier, size: 170 },
-  { id: 'name', header: 'Name', accessorFn: (order) => order.name, size: 300 },
+  { id: 'name', header: 'Name', accessorFn: (order) => order.name, size: 220 },
   {
     id: 'date',
     header: 'Date',
     accessorFn: (order) => formatDate(workOrderDate(order)),
+    // Fits a full YYYY-MM-DD date when the panel shares the row with Documents.
     size: 120,
   },
 ];
