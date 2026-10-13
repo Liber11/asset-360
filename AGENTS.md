@@ -309,6 +309,7 @@ Facts learned while building this app. Human-facing procedures (in Spanish) live
 - `CogniteActivity` has no `status` property; do not invent one (see SPEC.md → Clarifications).
 - Time series hang off instrument assets (e.g. `23-PT-92532`), not the equipment above them; panels include sub-assets by default (FR-018) via a `nested` filter on `assets → CogniteAsset.path`. That filter only works on `instances.search` (max 1000 results, no cursor); `instances.list` rejects nested filters on list direct relations with a 400.
 - Filtered DMS `instances.list` can return short or empty pages with a `nextCursor`; never treat page size as "done". `listRelatedNodes` caps requests instead.
+- `datapoints.retrieve` with aggregates rejects requests whose per-series limits add up to more than 10,000 (400); `TimeSeriesService` splits that budget across the selected series.
 
 ### Code patterns already in place — reuse them
 

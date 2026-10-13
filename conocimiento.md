@@ -31,6 +31,8 @@ Las reglas técnicas para el asistente están en `CLAUDE.md` (sección 10).
 | "Aplicaciones personalizadas" muestra "No apps available" | Ese es el catálogo de apps **publicadas**. La tuya aún no está publicada (se publica con *deploy* al final) | No es un error. Vuelve con la dirección del punto 3 |
 | La primera vez que abres un documento, la app vuelve sola a la pantalla de inicio | Vite (el servidor de desarrollo) descubrió una librería nueva y recargó la página. **Solo en desarrollo.** Ya se evitó configurando `optimizeDeps.include` | Nada; si pasa, vuelve a abrir el activo desde "Recently viewed" |
 | Después de cambiar `vite.config.ts` aparece la nube | El servidor se reinicia solo y genera un certificado nuevo | Acepta el certificado en `https://localhost:3001` y F5 en Fusion |
+| "localhost rechazó la conexión" | `npm run dev` no está corriendo (se cerró su ventana de PowerShell) | Vuelve a correr `npm run dev` en la carpeta de la app y deja la ventana abierta; acepta el certificado |
+| Gráfico: "Sum of limits for aggregate data points can not exceed 10000" | CDF permite como máximo 10.000 puntos **en total** por consulta, y la app pedía 10.000 por serie. **Ya corregido**: el tope se reparte entre las series marcadas | Nada |
 | Escribiste `npm run dev` dentro de la ventana donde ya corre | Esa ventana está ocupada por el servidor | No pasa nada; se ignora. Usa otra ventana para otros comandos |
 
 ---
@@ -118,4 +120,5 @@ Plan de construcción (Step 5), una etapa = un commit:
 | `npm run build` | Compila la app como para publicarla |
 | `npm run test:coverage` | Mide qué porcentaje del código cubren los tests (la revisión exige 80 % o más) |
 | `npx @cognite/cli apps setup-https` | Instala un certificado confiable para `localhost` |
-| `npm run deploy` | Publica la app en Fusion (al final) |
+| `npm run deploy` | Sube una versión **borrador (DRAFT, preview)** de la app a CDF; no la publica para todos |
+| `git push` | Sube el código a GitHub (`Liber11/asset-360`) |
