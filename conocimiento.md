@@ -33,6 +33,7 @@ Las reglas técnicas para el asistente están en `CLAUDE.md` (sección 10).
 | Después de cambiar `vite.config.ts` aparece la nube | El servidor se reinicia solo y genera un certificado nuevo | Acepta el certificado en `https://localhost:3001` y F5 en Fusion |
 | "localhost rechazó la conexión" | `npm run dev` no está corriendo (se cerró su ventana de PowerShell) | Vuelve a correr `npm run dev` en la carpeta de la app y deja la ventana abierta; acepta el certificado |
 | Gráfico: "Sum of limits for aggregate data points can not exceed 10000" | CDF permite como máximo 10.000 puntos **en total** por consulta, y la app pedía 10.000 por serie. **Ya corregido**: el tope se reparte entre las series marcadas | Nada |
+| `npm run deploy`: "Failed to fetch OpenID configuration from https://auth.cognite.com" | La red de la empresa inspecciona HTTPS con su propio certificado, y Node no lo reconoce (`UNABLE_TO_GET_ISSUER_CERT_LOCALLY`) | En PowerShell: `$env:NODE_OPTIONS="--use-system-ca"` y luego `npm run deploy` en la misma ventana |
 | Escribiste `npm run dev` dentro de la ventana donde ya corre | Esa ventana está ocupada por el servidor | No pasa nada; se ignora. Usa otra ventana para otros comandos |
 
 ---
