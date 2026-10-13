@@ -25,9 +25,19 @@ export function Workspace() {
         {hasSelectedAsset ? (
           <>
             <AssetHeader />
-            <TimeSeriesPanel />
-            <WorkOrdersPanel />
-            <DocumentsPanel />
+            {/* Wide screens: charts full width, work orders and documents side by side.
+                Narrower (13" laptop next to the Fusion sidebar): everything stacks. */}
+            <div className="grid items-start gap-6 xl:grid-cols-2">
+              <div className="min-w-0 xl:col-span-2">
+                <TimeSeriesPanel />
+              </div>
+              <div className="min-w-0">
+                <WorkOrdersPanel />
+              </div>
+              <div className="min-w-0">
+                <DocumentsPanel />
+              </div>
+            </div>
           </>
         ) : (
           <>

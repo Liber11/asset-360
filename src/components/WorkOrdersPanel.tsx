@@ -19,8 +19,9 @@ import { useWorkOrdersViewModel } from '../viewmodels/useWorkOrdersViewModel';
 import { PanelStatus } from './PanelStatus';
 
 const COLUMNS: ColumnDef<WorkOrder>[] = [
-  { id: 'identifier', header: 'ID', accessorFn: (order) => order.identifier, size: 140 },
-  { id: 'name', header: 'Name', accessorFn: (order) => order.name, size: 320 },
+  // Wide enough for operation ids such as FAO-141088-020.
+  { id: 'identifier', header: 'ID', accessorFn: (order) => order.identifier, size: 170 },
+  { id: 'name', header: 'Name', accessorFn: (order) => order.name, size: 300 },
   {
     id: 'date',
     header: 'Date',

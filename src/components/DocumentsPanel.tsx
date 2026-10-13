@@ -26,7 +26,7 @@ import { PreviewErrorBoundary } from './filePreview/PreviewErrorBoundary';
 import { PanelStatus } from './PanelStatus';
 
 const COLUMNS: ColumnDef<DocumentItem>[] = [
-  { id: 'name', header: 'Name', accessorFn: (doc) => doc.name, size: 320 },
+  { id: 'name', header: 'Name', accessorFn: (doc) => doc.name, size: 260 },
   { id: 'type', header: 'Type', accessorFn: (doc) => documentTypeLabel(doc), size: 90 },
   {
     id: 'action',
