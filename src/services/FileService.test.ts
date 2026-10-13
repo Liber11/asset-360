@@ -70,6 +70,35 @@ describe('FileService', () => {
     });
   });
 
+  describe('searchByName', () => {
+    it('searches CogniteFile names for the tag and keeps only names that contain it', async () => {
+      vi.mocked(client.instances.search).mockResolvedValue({
+        items: [
+          fileNode('m1', { name: '23-HA-9114_manual.pdf', mimeType: 'application/pdf', isUploaded: true }, 1000),
+          fileNode('m2', { name: '23-HA-9115_manual.pdf', isUploaded: true }, 1000),
+        ],
+      });
+
+      const result = await createFileService(client).searchByName('23-ha-9114');
+
+      expect(client.instances.search).toHaveBeenCalledWith({
+        view: CDM_VIEWS.file,
+        query: '23-ha-9114',
+        instanceType: 'node',
+        properties: ['name'],
+        limit: 50,
+      });
+      expect(result.map((doc) => doc.name)).toEqual(['23-HA-9114_manual.pdf']);
+    });
+
+    it('skips the request for tags too short to be meaningful', async () => {
+      const result = await createFileService(client).searchByName(' 23 ');
+
+      expect(result).toEqual([]);
+      expect(client.instances.search).not.toHaveBeenCalled();
+    });
+  });
+
   describe('getDownloadUrl', () => {
     it('requests a download link by instance id', async () => {
       vi.mocked(client.files.getDownloadUrls).mockResolvedValue([

@@ -9,9 +9,19 @@ import { useHostApi } from '../host/HostApiContext';
 import { useServices } from '../services/ServicesContext';
 import { useWorkspaceState } from '../state/useWorkspaceState';
 
+import { useSelectedAssetQuery } from './useSelectedAssetQuery';
+
 export type DocumentsViewModel = {
   status: LoadStatus;
+  /** Documents linked to the asset in the data model. */
   documents: DocumentItem[];
+  /**
+   * Fallback when nothing is linked: files whose name contains the asset tag. Not a modelled
+   * relationship, so the UI must label it as such (FR-009a). `idle` while not needed.
+   */
+  nameMatchStatus: LoadStatus | 'idle';
+  nameMatchTag?: string;
+  nameMatches: DocumentItem[];
   hasMore: boolean;
   errorMessage?: string;
   retry: () => void;
@@ -39,6 +49,16 @@ export function useDocumentsViewModel(): DocumentsViewModel {
     enabled: asset !== null,
   });
 
+  const assetQuery = useSelectedAssetQuery();
+  const tag = assetQuery.data?.name;
+  const needsNameMatch = query.isSuccess && query.data.items.length === 0 && tag !== undefined;
+
+  const nameMatch = useQuery({
+    queryKey: ['documents-by-name', tag],
+    queryFn: () => (tag ? fileService.searchByName(tag) : Promise.resolve([])),
+    enabled: needsNameMatch,
+  });
+
   const downloadMutation = useMutation({
     mutationFn: async (doc: DocumentItem) => {
       if (!api) throw new Error('Not connected to Fusion.');
@@ -59,6 +79,7 @@ export function useDocumentsViewModel(): DocumentsViewModel {
   const retry = useCallback(() => void refetch(), [refetch]);
 
   const documents = query.data?.items ?? [];
+  const nameMatches = needsNameMatch ? (nameMatch.data ?? []) : [];
   const openKey = state.openDocument ? refKey(state.openDocument) : null;
 
   return {
@@ -67,7 +88,12 @@ export function useDocumentsViewModel(): DocumentsViewModel {
     hasMore: query.data?.hasMore ?? false,
     errorMessage: query.isError ? errorMessage(query.error) : undefined,
     retry,
-    openDocumentDetail: openKey ? documents.find((doc) => refKey(doc.ref) === openKey) : undefined,
+    nameMatchStatus: needsNameMatch ? toLoadStatus(nameMatch) : 'idle',
+    nameMatchTag: needsNameMatch ? tag : undefined,
+    nameMatches,
+    openDocumentDetail: openKey
+      ? [...documents, ...nameMatches].find((doc) => refKey(doc.ref) === openKey)
+      : undefined,
     openDocument,
     closeDocument,
     download,

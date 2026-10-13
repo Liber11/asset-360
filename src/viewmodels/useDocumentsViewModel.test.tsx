@@ -1,7 +1,14 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { makeFileService, makeHostApi, makeProviders, makeServices } from '../__mocks__/testProviders';
+import {
+  assetDetails,
+  makeAssetService,
+  makeFileService,
+  makeHostApi,
+  makeProviders,
+  makeServices,
+} from '../__mocks__/testProviders';
 import type { DocumentItem } from '../domain/documents';
 import type { FileService } from '../services/FileService';
 
@@ -80,6 +87,29 @@ describe(useDocumentsViewModel.name, () => {
     await waitFor(() => expect(result.current.downloadErrorMessage).toBe('link expired'));
   });
 
+  it('falls back to files whose name contains the asset tag when nothing is linked', async () => {
+    const manual: DocumentItem = { ...PDF, ref: { space: 'sp', externalId: 'manual' }, name: '23-HA-9114_manual.pdf' };
+    const service = listing([], { searchByName: vi.fn(() => Promise.resolve([manual])) });
+    const { result } = renderVm(service);
+
+    await waitFor(() => expect(result.current.nameMatchStatus).toBe('success'));
+    expect(service.searchByName).toHaveBeenCalledWith('23-HA-9114');
+    expect(result.current.nameMatchTag).toBe('23-HA-9114');
+    expect(result.current.nameMatches).toEqual([manual]);
+
+    act(() => result.current.openDocument(manual));
+    expect(result.current.openDocumentDetail).toEqual(manual);
+  });
+
+  it('does not search by name when documents are linked', async () => {
+    const service = listing([PDF]);
+    const { result } = renderVm(service);
+
+    await waitFor(() => expect(result.current.status).toBe('success'));
+    expect(result.current.nameMatchStatus).toBe('idle');
+    expect(service.searchByName).not.toHaveBeenCalled();
+  });
+
   it('restores an open document from the shared link once the list is loaded', async () => {
     const { result } = renderVm(listing([PDF]), makeHostApi(), { openDocument: PDF.ref });
 
@@ -92,7 +122,12 @@ function listing(items: DocumentItem[], overrides: Partial<FileService> = {}): F
 }
 
 function renderVm(fileService: FileService, api = makeHostApi(), extraState: Record<string, unknown> = {}) {
-  const services = makeServices({ fileService });
+  const services = makeServices({
+    fileService,
+    assetService: makeAssetService({
+      retrieve: vi.fn(() => Promise.resolve(assetDetails('pump-101', { name: '23-HA-9114' }))),
+    }),
+  });
   const initialState = JSON.stringify({ selectedAsset: ASSET, ...extraState });
   return renderHook(() => useDocumentsViewModel(), { wrapper: makeProviders({ services, api, initialState }) });
 }

@@ -41,6 +41,7 @@ export function makeTimeSeriesService(overrides: Partial<TimeSeriesService> = {}
 export function makeFileService(overrides: Partial<FileService> = {}): FileService {
   return {
     listForAsset: vi.fn(() => Promise.resolve({ items: [], hasMore: false })),
+    searchByName: vi.fn(() => Promise.resolve([])),
     getDownloadUrl: vi.fn(() => assert.fail('getDownloadUrl not expected')),
     ...overrides,
   };

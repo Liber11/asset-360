@@ -3,7 +3,14 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { stubLayoutSize } from '../__mocks__/layout';
-import { makeFileService, makeHostApi, makeProviders, makeServices } from '../__mocks__/testProviders';
+import {
+  assetDetails,
+  makeAssetService,
+  makeFileService,
+  makeHostApi,
+  makeProviders,
+  makeServices,
+} from '../__mocks__/testProviders';
 import type { DocumentItem } from '../domain/documents';
 import type { HostApi } from '../host/HostApiContext';
 import type { FileService } from '../services/FileService';
@@ -78,6 +85,20 @@ describe('DocumentsPanel', () => {
     expect(await screen.findByText('Could not download the file: link expired')).toBeInTheDocument();
   });
 
+  it('offers files matched by name, clearly labelled, when nothing is linked', async () => {
+    const manual: DocumentItem = { ...PDF, ref: { space: 'sp', externalId: 'manual' }, name: '23-HA-9114_manual.pdf' };
+    renderPanel(listing([], { searchByName: vi.fn(() => Promise.resolve([manual])) }));
+
+    const section = await screen.findByRole('region', { name: 'Matched by name' });
+    expect(within(section).getByText('Not linked in CDF')).toBeInTheDocument();
+    expect(within(section).getByText(/Files whose name contains "23-HA-9114"/)).toBeInTheDocument();
+    expect(screen.getByText('No documents linked to this asset')).toBeInTheDocument();
+
+    await userEvent.click(within(section).getByText('23-HA-9114_manual.pdf'));
+
+    expect(await screen.findByTestId('file-preview')).toHaveTextContent('23-HA-9114_manual.pdf');
+  });
+
   it('shows the empty state when the asset has no documents', async () => {
     renderPanel(listing([]));
 
@@ -96,7 +117,12 @@ function listing(items: DocumentItem[], overrides: Partial<FileService> = {}): F
 }
 
 function renderPanel(fileService: FileService, api: HostApi = makeHostApi()) {
-  const services = makeServices({ fileService });
+  const services = makeServices({
+    fileService,
+    assetService: makeAssetService({
+      retrieve: vi.fn(() => Promise.resolve(assetDetails('pump-101', { name: '23-HA-9114' }))),
+    }),
+  });
   const initialState = JSON.stringify({ selectedAsset: { space: 'sp', externalId: 'pump-101' } });
   return render(<DocumentsPanel />, { wrapper: makeProviders({ services, api, initialState }) });
 }

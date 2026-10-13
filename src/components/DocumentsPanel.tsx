@@ -36,6 +36,23 @@ const COLUMNS: ColumnDef<DocumentItem>[] = [
   { id: 'updated', header: 'Updated', accessorFn: (doc) => formatDate(doc.updatedTime), size: 120 },
 ];
 
+type DocumentsGridProps = { label: string; documents: DocumentItem[]; onOpen: (doc: DocumentItem) => void };
+
+function DocumentsGrid({ label, documents, onOpen }: DocumentsGridProps) {
+  return (
+    <DataGrid
+      aria-label={label}
+      className={documents.length > 4 ? 'h-64' : 'h-40'}
+      data={documents}
+      columns={COLUMNS}
+      getRowId={(doc) => refKey(doc.ref)}
+      enableSorting={false}
+      size="compact"
+      onRowClick={(row) => row.original.isUploaded && onOpen(row.original)}
+    />
+  );
+}
+
 export function DocumentsPanel() {
   const vm = useDocumentsViewModel();
   const renderPreview = useFilePreview();
@@ -69,16 +86,25 @@ export function DocumentsPanel() {
         )}
 
         {vm.status === 'success' && vm.documents.length > 0 && (
-          <DataGrid
-            aria-label="Documents"
-            className="h-64"
-            data={vm.documents}
-            columns={COLUMNS}
-            getRowId={(doc) => refKey(doc.ref)}
-            enableSorting={false}
-            size="compact"
-            onRowClick={(row) => row.original.isUploaded && vm.openDocument(row.original)}
-          />
+          <DocumentsGrid label="Documents" documents={vm.documents} onOpen={vm.openDocument} />
+        )}
+
+        {vm.nameMatchStatus !== 'idle' && vm.nameMatchStatus !== 'success' && (
+          <PanelStatus status={vm.nameMatchStatus} onRetry={vm.retry} />
+        )}
+
+        {vm.nameMatchStatus === 'success' && vm.nameMatches.length > 0 && (
+          <section aria-label="Matched by name" className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-medium">Matched by name</h3>
+              <Badge variant="warning">Not linked in CDF</Badge>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Files whose name contains "{vm.nameMatchTag}". They are not linked to this asset in the data model, so
+              check that they are the right documents.
+            </p>
+            <DocumentsGrid label="Documents matched by name" documents={vm.nameMatches} onOpen={vm.openDocument} />
+          </section>
         )}
       </CardContent>
 

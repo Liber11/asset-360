@@ -1,12 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import { refKey } from '../domain/cdm';
 import { errorMessage } from '../domain/errors';
 import { toLoadStatus, type LoadStatus } from '../domain/loadStatus';
 import type { AssetDetails } from '../services/AssetService';
-import { useServices } from '../services/ServicesContext';
 import { useWorkspaceState } from '../state/useWorkspaceState';
+
+import { useSelectedAssetQuery } from './useSelectedAssetQuery';
 
 export type AssetHeaderViewModel = {
   status: LoadStatus | 'not-found';
@@ -21,14 +20,7 @@ export type AssetHeaderViewModel = {
 
 export function useAssetHeaderViewModel(): AssetHeaderViewModel {
   const { state, update } = useWorkspaceState();
-  const { assetService } = useServices();
-  const selected = state.selectedAsset;
-
-  const query = useQuery({
-    queryKey: ['asset', selected ? refKey(selected) : null],
-    queryFn: () => (selected ? assetService.retrieve(selected) : Promise.resolve(null)),
-    enabled: selected !== null,
-  });
+  const query = useSelectedAssetQuery();
 
   const { refetch } = query;
   const retry = useCallback(() => void refetch(), [refetch]);
