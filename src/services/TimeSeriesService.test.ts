@@ -139,6 +139,18 @@ describe('TimeSeriesService', () => {
       expect(result.get('sp:ts-a')).toEqual([{ timestamp: 10, value: 1.5 }]);
     });
 
+    it('splits the 10,000 aggregate limit across the selected series', async () => {
+      mocks.dpRetrieve.mockResolvedValue([]);
+
+      await createTimeSeriesService(client).getDatapoints(
+        [ref('ts-a'), ref('ts-b'), ref('ts-c')],
+        { start: 0, end: 100 },
+        '1h'
+      );
+
+      expect(mocks.dpRetrieve).toHaveBeenCalledWith(expect.objectContaining({ limit: 3_333 }));
+    });
+
     it('makes no request for an empty selection', async () => {
       await createTimeSeriesService(client).getDatapoints([], { start: 0, end: 1 }, '1h');
 

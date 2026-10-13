@@ -33,8 +33,11 @@ export type TimeSeriesClient = {
   datapoints: Pick<CogniteClient['datapoints'], 'retrieve' | 'retrieveLatest'>;
 };
 
-/** Generous per-series cap; with GRANULARITY each chart needs a few hundred points. */
-const DATAPOINT_LIMIT = 10_000;
+/**
+ * CDF caps the sum of per-series limits for aggregates at 10,000 per request, so the budget is split
+ * across the selection. Each chart needs at most a few hundred points at the chosen granularity.
+ */
+const AGGREGATE_LIMIT_TOTAL = 10_000;
 
 function hasNumber<K extends string>(value: unknown, key: K): value is Record<K, number> {
   return typeof value === 'object' && value !== null && key in value && typeof Reflect.get(value, key) === 'number';
@@ -104,7 +107,7 @@ class CdmTimeSeriesService implements TimeSeriesService {
       end: window.end,
       aggregates: ['average'],
       granularity,
-      limit: DATAPOINT_LIMIT,
+      limit: Math.floor(AGGREGATE_LIMIT_TOTAL / refs.length),
       ignoreUnknownIds: true,
     });
 
