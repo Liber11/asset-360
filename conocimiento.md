@@ -71,6 +71,7 @@ Plan de construcción (Step 5), una etapa = un commit:
 - `23-PC-9109` tiene **16 órdenes** de trabajo. Al principio parecían "100+" porque CDF respondía "hay más páginas" aunque no las hubiera; la app ahora lee hasta el final.
 - **Las series de tiempo están ligadas a los instrumentos, no al equipo.** La bomba `23-PC-9109` no tiene series propias; sus sensores cuelgan de activos hijos como `23-PT-92532` (*PT* = transmisor de presión) o `23-TT-92537` (*TT* = transmisor de temperatura). Por eso existe la casilla **"Include sub-assets"** (activada por defecto).
 - El último dato de las series es de **2026-03-14**: con un gráfico anclado a "hoy" saldría vacío.
+- **Los 15 archivos no están ligados a ningún activo** (en Fusion → Buscar → File → un archivo → pestaña Assets: 0). El vínculo solo está en el **nombre** (`23-HA-9114_manual.pdf` es del equipo `23-HA-9114`). Por eso el panel Documents muestra una sección **"Matched by name — Not linked in CDF"**.
 - Probado: `23-PC-9109` con "Include sub-assets" **encendido** muestra **3 series** (del motor `23-PC-9109-M01`) y **36 órdenes**; **apagado**, 0 series y 16 órdenes.
 - **Error que encontramos:** el filtro "todo lo que cuelga de este activo" no funciona en el endpoint de listado de CDF (error 400), solo en el de **búsqueda**. Se resolvió leyendo la documentación oficial, no probando a ciegas.
 

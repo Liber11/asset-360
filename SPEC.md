@@ -114,6 +114,10 @@ report or alarm.
 - FR-009: The 360 view MUST include a documents panel listing `CogniteFile` instances
   linked to the asset (via `CogniteFile.assets`), with `name`, `mimeType`, and last-updated
   date (`sourceUpdatedTime`, falling back to the node's `lastUpdatedTime`).
+- FR-009a: When no documents are linked to the asset, the panel MUST search for files whose
+  name contains the asset tag (`name`) and show them in a separate "Matched by name"
+  section, labelled "Not linked in CDF", explaining that they are not a modelled
+  relationship. The "no documents linked" empty state stays visible.
 - FR-010: Users MUST be able to preview PDFs and common images (PNG, JPEG, GIF, WEBP)
   inline when the file content is uploaded (`isUploaded = true`). Other types MUST offer
   a download / open-externally action. Files without uploaded content MUST be shown as
@@ -168,6 +172,10 @@ report or alarm.
   above them (e.g. the pump `23-PC-9109`, which has none directly). This is why
   FR-018 includes sub-assets by default. Their latest datapoints are months old
   (e.g. 2026-03-14), confirming the latest-datapoint anchoring of FR-005.
+- Checked against live `publicdatacdm` data: the project has 15 `CogniteFile` nodes
+  (space `valhall-files`, e.g. `23-HA-9114_manual.pdf`, `23-TT-92603-SP.pdf`, P&IDs named
+  `ME-P-…`) and none of them has `assets` set, so no document is linked to any asset. The
+  only link is the equipment tag inside the file name, hence the FR-009a fallback.
 - Inline preview is limited to PDFs and PNG/JPEG/GIF/WEBP images in v1.
 - `CogniteActivity` has no `status` property in the core data model, so v1 does not show
   a work order status. The `publicdatacdm` project may also hold `CogniteMaintenanceOrder`
