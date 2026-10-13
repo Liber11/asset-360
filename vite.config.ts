@@ -25,8 +25,11 @@ export default defineConfig({
   worker: {
     format: 'es',
   },
-  // Pre-bundling pdfjs-dist breaks the PDF.js worker used by CogniteFileViewer.
   optimizeDeps: {
+    // Pre-bundling pdfjs-dist breaks the PDF.js worker used by CogniteFileViewer.
     exclude: ['pdfjs-dist'],
+    // react-pdf is only imported lazily (when a document is opened); pre-bundle it at startup so the
+    // dev server does not discover it mid-session and force a full page reload.
+    include: ['react-pdf'],
   },
 });
