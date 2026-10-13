@@ -29,6 +29,8 @@ Las reglas técnicas para el asistente están en `CLAUDE.md` (sección 10).
 | Dentro de Fusion, una nube con "la página web de https://localhost:3001 podría estar teniendo problemas" | El navegador no aceptó el certificado, o `npm run dev` no está corriendo. **Pasa cada vez que reinicias `npm run dev`**: se genera un certificado nuevo | Abre `https://localhost:3001` en otra pestaña, acepta el certificado y recarga Fusion |
 | En `https://localhost:3001`: "Failed to connect to Fusion host" | **Es normal.** La app está hecha para vivir dentro de Fusion; abierta sola no encuentra a Fusion | Usa la dirección del punto 3 |
 | "Aplicaciones personalizadas" muestra "No apps available" | Ese es el catálogo de apps **publicadas**. La tuya aún no está publicada (se publica con *deploy* al final) | No es un error. Vuelve con la dirección del punto 3 |
+| La primera vez que abres un documento, la app vuelve sola a la pantalla de inicio | Vite (el servidor de desarrollo) descubrió una librería nueva y recargó la página. **Solo en desarrollo.** Ya se evitó configurando `optimizeDeps.include` | Nada; si pasa, vuelve a abrir el activo desde "Recently viewed" |
+| Después de cambiar `vite.config.ts` aparece la nube | El servidor se reinicia solo y genera un certificado nuevo | Acepta el certificado en `https://localhost:3001` y F5 en Fusion |
 | Escribiste `npm run dev` dentro de la ventana donde ya corre | Esa ventana está ocupada por el servidor | No pasa nada; se ignora. Usa otra ventana para otros comandos |
 
 ---
@@ -53,7 +55,7 @@ Plan de construcción (Step 5), una etapa = un commit:
 2. Búsqueda + encabezado + recientes ✅ — probado con datos reales
 3. Órdenes de trabajo ✅ — probado con datos reales (y corregido el orden)
 4. Series de tiempo con gráfico ✅ — probado con datos reales; se agregó "Include sub-assets"
-5. Documentos con vista previa
+5. Documentos con vista previa ✅ — probado: abre `23-HA-9114_manual.pdf` desde el activo `23-HA-9114`
    - Pendiente para la etapa 6: la columna ID de órdenes corta textos largos
 6. Diseño final de la página
 

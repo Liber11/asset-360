@@ -1,6 +1,6 @@
 # Próximos pasos — Asset 360 (para retomar otro día)
 
-Última sesión: **2026-10-09**. Avance estimado: **~55 % de toda la actividad** (~65 % del ejercicio guiado, pasos 1 a 7).
+Última sesión: **2026-10-13**. Avance estimado: **~62 % de toda la actividad** (~73 % del ejercicio guiado, pasos 1 a 7).
 
 > **Si es la primera vez que abres este archivo después de reiniciar:** lee primero
 > "1. Cómo retomar" y después "3. Lo que falta". El detalle técnico y los problemas
@@ -48,7 +48,7 @@ conversación con Claude.
 | **2. App Brief** (`flows-app-brief`) | ✅ | `App-Brief.md` (Tier 1, owner Liber11) |
 | **3. SPEC** | ✅ | `SPEC.md` verificado con el Cognite Docs MCP; detectamos 2 propiedades inventadas en el SPEC de referencia de la guía |
 | **4. Plan** | ✅ | Plan de 6 etapas aprobado |
-| **5. Construir y conectar datos** | 🟡 4 de 6 etapas | Ver detalle abajo |
+| **5. Construir y conectar datos** | 🟡 5 de 6 etapas | Ver detalle abajo |
 | **6. Diseño con Aura** | 🟡 parcial | Todo usa componentes Aura; falta pulir |
 | **7. Revisiones** | ⬜ | — |
 | **Certificación** | ⬜ | — |
@@ -62,26 +62,21 @@ conversación con Claude.
 | 3. Órdenes de trabajo | ✅ | Tabla Aura con las 100 más recientes + detalle en ventana. `23-PC-9109`: 16 propias, 36 con sub-activos |
 | 4. Series de tiempo | ✅ | Lista + un mini-gráfico por serie, anclado al último dato, rangos 1D/7D/30D/1Y, Refresh. Verificado con `CurrentL2` del motor de `23-PC-9109` |
 | Extra: "Include sub-assets" | ✅ | Interruptor (encendido por defecto) para incluir lo que cuelga del activo. Necesario porque en Valhall las series están en los instrumentos |
-| **5. Documentos** | ⬜ | **Siguiente paso** |
-| **6. Layout final** | ⬜ | — |
+| 5. Documentos | ✅ | Panel + vista previa de PDF/imágenes (visor de Cognite) + descarga. Como los archivos de `publicdatacdm` no están ligados a activos, se muestran los que **contienen el tag en el nombre** (sección "Matched by name — Not linked in CDF"). Verificado: `23-HA-9114` → abre `23-HA-9114_manual.pdf`. F5 restaura activo + documento abierto |
+| **6. Layout final** | ⬜ | **Siguiente paso** |
 
-**Calidad actual:** 176 tests pasan, el lint y el build pasan, y todo está guardado en git (20 commits).
+**Calidad actual:** 211 tests pasan, el lint y el build pasan, y todo está guardado en git.
 
 ---
 
 ## 3. Lo que falta para terminar todo
 
-### 3.1 Etapa 5 — Documentos con vista previa (siguiente)
-- Panel **"Documents"** con los `CogniteFile` ligados al activo (respetando "Include sub-assets"): nombre, tipo y fecha.
-- Vista previa dentro de la app de **PDF e imágenes** (PNG, JPEG, GIF, WEBP); para los demás tipos, botón de descarga.
-- **Usar la skill `integrate-file-viewer`** (trae el visor de archivos de CDF listo). No construirlo desde cero.
-- Puede hacer falta agregar el dominio de descarga de archivos en `manifest.json` (`permissions.network`).
-- El proyecto tiene **solo 15 archivos**. Para probar, buscar en el buscador de Fusion → categoría **File** qué activos tienen documentos.
-- Seguir el patrón ya usado: servicio `FileService` + ViewModel + panel + tests (ver `CLAUDE.md` §10).
+### 3.1 Etapa 5 — Documentos ✅ (hecha el 2026-10-13)
 
-### 3.2 Etapa 6 — Layout final
+### 3.2 Etapa 6 — Layout final (siguiente)
 - Encabezado arriba; paneles en grilla de 2 columnas en pantallas anchas y apilados en una laptop de 13" (sin scroll horizontal).
 - **Arreglar:** la columna **ID** de las órdenes corta textos largos (`FAO-141088-0...`).
+- Considerar: el bundle principal pesa ~1 MB (gráficos + tablas); revisar con la skill `performance` antes de la revisión de código.
 - Si cambia algo visible, actualizar `SPEC.md`.
 
 ### 3.3 Paso 6 de la guía — Pulir el diseño con Aura
