@@ -26,7 +26,7 @@ Las reglas técnicas para el asistente están en `CLAUDE.md` (sección 10).
 |---|---|---|
 | Al ejecutar `npm run dev`: ventana de Windows "no puede encontrar el archivo `\https://...`" | La app intenta abrir Fusion sola y en Windows falla (agrega una `\` al principio) | Clic en **Aceptar** y abre a mano la dirección del punto 3 |
 | "Su conexión no es privada" en `https://localhost:3001` | El certificado de seguridad es casero (`self-signed`) | **Avanzado → Continuar a localhost**. Solución definitiva: `npx @cognite/cli apps setup-https` |
-| Dentro de Fusion, una nube con "la página web de https://localhost:3001 podría estar teniendo problemas" | El navegador no aceptó el certificado todavía, o `npm run dev` no está corriendo | Abre `https://localhost:3001` en otra pestaña, acepta el certificado y recarga Fusion |
+| Dentro de Fusion, una nube con "la página web de https://localhost:3001 podría estar teniendo problemas" | El navegador no aceptó el certificado, o `npm run dev` no está corriendo. **Pasa cada vez que reinicias `npm run dev`**: se genera un certificado nuevo | Abre `https://localhost:3001` en otra pestaña, acepta el certificado y recarga Fusion |
 | En `https://localhost:3001`: "Failed to connect to Fusion host" | **Es normal.** La app está hecha para vivir dentro de Fusion; abierta sola no encuentra a Fusion | Usa la dirección del punto 3 |
 | "Aplicaciones personalizadas" muestra "No apps available" | Ese es el catálogo de apps **publicadas**. La tuya aún no está publicada (se publica con *deploy* al final) | No es un error. Vuelve con la dirección del punto 3 |
 | Escribiste `npm run dev` dentro de la ventana donde ya corre | Esa ventana está ocupada por el servidor | No pasa nada; se ignora. Usa otra ventana para otros comandos |

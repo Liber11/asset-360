@@ -22,6 +22,7 @@ conversación con Claude.
    ```
 2. Si aparece la ventana de Windows "no puede encontrar el archivo `\https://...`", haz clic en **Aceptar**. Es un error conocido y no afecta.
 3. En el navegador abre `https://localhost:3001`. Si dice "Su conexión no es privada": **Avanzado → Continuar a localhost**. Verás "Failed to connect to Fusion host", y es normal.
+   **Hay que hacerlo cada vez que se reinicia `npm run dev`** (se genera un certificado nuevo). Para evitarlo: `npx @cognite/cli apps setup-https`.
 4. Abre la app dentro de Fusion (guárdala como favorito):
    ```
    https://publicdata.fusion.cognite.com/publicdatacdm//custom-apps/development/asset-360/3001?cluster=api.cognitedata.com&workspace=flows
