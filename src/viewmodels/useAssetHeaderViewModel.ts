@@ -33,7 +33,7 @@ export function useAssetHeaderViewModel(): AssetHeaderViewModel {
   const { refetch } = query;
   const retry = useCallback(() => void refetch(), [refetch]);
   const setIncludeSubAssets = useCallback((value: boolean) => update({ includeSubAssets: value }), [update]);
-  const close = useCallback(() => update({ selectedAsset: null, selectedSeries: [], openWorkOrder: null }), [update]);
+  const close = useCallback(() => update({ selectedAsset: null, selectedSeries: [], openWorkOrder: null, openDocument: null }), [update]);
 
   const status = toLoadStatus(query);
 

@@ -42,6 +42,7 @@ describe(parseWorkspaceState.name, () => {
       range: '30d',
       openWorkOrder: { space: 'sp', externalId: 'wo-1' },
       includeSubAssets: false,
+      openDocument: { space: 'sp', externalId: 'doc-1' },
     };
 
     expect(parseWorkspaceState(JSON.stringify(saved))).toEqual(saved);
@@ -55,6 +56,7 @@ describe(parseWorkspaceState.name, () => {
       range: '5y',
       openWorkOrder: 'wo-1',
       includeSubAssets: 'yes',
+      openDocument: 42,
     });
 
     expect(parseWorkspaceState(raw)).toEqual({

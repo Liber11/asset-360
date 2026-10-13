@@ -14,6 +14,8 @@ export type WorkspaceState = {
   openWorkOrder: InstanceRef | null;
   /** Panels also show items linked to assets below the selected one. */
   includeSubAssets: boolean;
+  /** Document whose preview dialog is open. */
+  openDocument: InstanceRef | null;
 };
 
 export const DEFAULT_WORKSPACE_STATE: WorkspaceState = {
@@ -23,6 +25,7 @@ export const DEFAULT_WORKSPACE_STATE: WorkspaceState = {
   range: '7d',
   openWorkOrder: null,
   includeSubAssets: true,
+  openDocument: null,
 };
 
 export function isInstanceRef(value: unknown): value is InstanceRef {
@@ -59,6 +62,7 @@ export function parseWorkspaceState(raw: string | undefined): WorkspaceState {
   const range = 'range' in parsed ? parsed.range : undefined;
   const openWorkOrder = 'openWorkOrder' in parsed ? parsed.openWorkOrder : undefined;
   const includeSubAssets = 'includeSubAssets' in parsed ? parsed.includeSubAssets : undefined;
+  const openDocument = 'openDocument' in parsed ? parsed.openDocument : undefined;
 
   return {
     selectedAsset: isInstanceRef(selectedAsset) ? selectedAsset : DEFAULT_WORKSPACE_STATE.selectedAsset,
@@ -68,6 +72,7 @@ export function parseWorkspaceState(raw: string | undefined): WorkspaceState {
     openWorkOrder: isInstanceRef(openWorkOrder) ? openWorkOrder : DEFAULT_WORKSPACE_STATE.openWorkOrder,
     includeSubAssets:
       typeof includeSubAssets === 'boolean' ? includeSubAssets : DEFAULT_WORKSPACE_STATE.includeSubAssets,
+    openDocument: isInstanceRef(openDocument) ? openDocument : DEFAULT_WORKSPACE_STATE.openDocument,
   };
 }
 

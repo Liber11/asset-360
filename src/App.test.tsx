@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import type { ComponentProps, ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { StubFilePreview } from './__mocks__/StubFilePreview';
 import {
   assetDetails,
   assetSummary,
@@ -31,7 +32,7 @@ describe('App', () => {
   });
 
   it('renders the workspace start screen once connected', async () => {
-    renderApp(<App deps={makeDeps()} connectToHostApp={makeConnectedFn()} services={makeServices()} />);
+    renderApp(<App deps={makeDeps()} connectToHostApp={makeConnectedFn()} services={makeServices()} filePreview={(props) => <StubFilePreview {...props} />} />);
 
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Asset 360' })).toBeInTheDocument());
     expect(screen.getByText('Search for an asset to start')).toBeInTheDocument();
@@ -45,7 +46,8 @@ describe('App', () => {
 
   it('searches, opens an asset, and syncs the selection to the host URL', async () => {
     const api = makeHostApi();
-    renderApp(<App deps={makeDeps()} connectToHostApp={makeConnectedFn(api)} services={makePumpServices()} />);
+    renderApp(<App deps={makeDeps()} connectToHostApp={makeConnectedFn(api)} services={makePumpServices()}
+        filePreview={(props) => <StubFilePreview {...props} />} />);
 
     await userEvent.type(await screen.findByRole('searchbox', { name: 'Search assets' }), 'pump');
     await userEvent.click(await screen.findByRole('button', { name: /PUMP-101/ }));
@@ -63,6 +65,7 @@ describe('App', () => {
         deps={makeDeps()}
         connectToHostApp={() => Promise.resolve({ api: makeHostApi(), initialState })}
         services={makePumpServices()}
+        filePreview={(props) => <StubFilePreview {...props} />}
       />
     );
 

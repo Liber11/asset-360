@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 
 import { createActivityService } from './ActivityService';
 import { createAssetService } from './AssetService';
+import { createFileService } from './FileService';
 import { createRecentAssetsStore } from './RecentAssetsStore';
 import { ServicesContext, type Services } from './ServicesContext';
 import { createTimeSeriesService } from './TimeSeriesService';
@@ -18,6 +19,7 @@ export function ServicesProvider({ storage, children }: ServicesProviderProps) {
       assetService: createAssetService(client),
       activityService: createActivityService(client),
       timeSeriesService: createTimeSeriesService(client),
+      fileService: createFileService(client),
       recentAssetsStore: createRecentAssetsStore(storage),
     }),
     [client, storage]

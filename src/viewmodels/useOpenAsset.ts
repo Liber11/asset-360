@@ -15,7 +15,7 @@ export function useOpenAsset(): (asset: RecentAsset) => void {
 
   return useCallback(
     (asset: RecentAsset) => {
-      update({ selectedAsset: asset.ref, selectedSeries: [], openWorkOrder: null, query: '' });
+      update({ selectedAsset: asset.ref, selectedSeries: [], openWorkOrder: null, openDocument: null, query: '' });
       queryClient.setQueryData(RECENT_ASSETS_QUERY_KEY, recentAssetsStore.add(asset));
     },
     [update, recentAssetsStore, queryClient]

@@ -1,7 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import type { ComponentType, ReactNode } from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
+import { makeHostApi } from '../__mocks__/testProviders';
 import { HostApiContext, type HostApi } from '../host/HostApiContext';
 
 import { useWorkspaceState } from './useWorkspaceState';
@@ -12,7 +13,7 @@ describe(useWorkspaceState.name, () => {
   let api: HostApi;
 
   beforeEach(() => {
-    api = { syncInternalState: vi.fn<HostApi['syncInternalState']>(() => Promise.resolve(true)) };
+    api = makeHostApi();
   });
 
   it('starts from the default state without initial state', () => {

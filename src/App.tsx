@@ -10,6 +10,8 @@ import { useEffect, useState } from 'react';
 import type { ComponentProps, ReactNode } from 'react';
 
 import { AppErrorBoundary } from './components/AppErrorBoundary';
+import { FilePreviewContext, type FilePreviewRenderer } from './components/filePreview/FilePreviewContext';
+import { LazyCdfFilePreview } from './components/filePreview/LazyCdfFilePreview';
 import { Workspace } from './components/Workspace';
 import { HostApiContext, type HostApi } from './host/HostApiContext';
 import { ServicesContext, type Services } from './services/ServicesContext';
@@ -48,12 +50,16 @@ const errorFallback = (
   </main>
 );
 
+const renderCdfFilePreview: FilePreviewRenderer = (props) => <LazyCdfFilePreview {...props} />;
+
 type AppProps = {
   deps?: ComponentProps<typeof CogniteSdkProvider>['deps'];
   connectToHostApp?: () => Promise<AppConnectResult>;
   onReload?: () => void;
   /** Overrides the CDF-backed services (tests). */
   services?: Services;
+  /** Overrides the PDF.js-based file preview (tests). */
+  filePreview?: FilePreviewRenderer;
 };
 
 function AppServices({ services, children }: { services?: Services; children: ReactNode }) {
@@ -66,6 +72,7 @@ function App({
   connectToHostApp = deps?.connectToHostApp ?? connectToHostAppImpl,
   onReload = () => window.location.reload(),
   services,
+  filePreview = renderCdfFilePreview,
 }: AppProps) {
   const [connection, setConnection] = useState<Connection>({ status: 'pending' });
 
@@ -91,11 +98,13 @@ function App({
       {connection.status === 'ready' && (
         <HostApiContext.Provider value={connection.api}>
           <AppServices services={services}>
-            <WorkspaceStateProvider initialState={connection.initialState}>
-              <AppErrorBoundary onReload={onReload}>
-                <Workspace />
-              </AppErrorBoundary>
-            </WorkspaceStateProvider>
+            <FilePreviewContext.Provider value={filePreview}>
+              <WorkspaceStateProvider initialState={connection.initialState}>
+                <AppErrorBoundary onReload={onReload}>
+                  <Workspace />
+                </AppErrorBoundary>
+              </WorkspaceStateProvider>
+            </FilePreviewContext.Provider>
           </AppServices>
         </HostApiContext.Provider>
       )}

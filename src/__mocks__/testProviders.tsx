@@ -2,13 +2,17 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ComponentType, ReactNode } from 'react';
 import { assert, vi } from 'vitest';
 
+import { FilePreviewContext } from '../components/filePreview/FilePreviewContext';
 import { HostApiContext, type HostApi } from '../host/HostApiContext';
 import type { ActivityService } from '../services/ActivityService';
 import type { AssetDetails, AssetService, AssetSummary } from '../services/AssetService';
+import type { FileService } from '../services/FileService';
 import type { RecentAsset, RecentAssetsStore } from '../services/RecentAssetsStore';
 import { ServicesContext, type Services } from '../services/ServicesContext';
 import type { TimeSeriesService } from '../services/TimeSeriesService';
 import { WorkspaceStateProvider } from '../state/WorkspaceStateProvider';
+
+import { StubFilePreview } from './StubFilePreview';
 
 export function makeAssetService(overrides: Partial<AssetService> = {}): AssetService {
   return {
@@ -34,6 +38,14 @@ export function makeTimeSeriesService(overrides: Partial<TimeSeriesService> = {}
   };
 }
 
+export function makeFileService(overrides: Partial<FileService> = {}): FileService {
+  return {
+    listForAsset: vi.fn(() => Promise.resolve({ items: [], hasMore: false })),
+    getDownloadUrl: vi.fn(() => assert.fail('getDownloadUrl not expected')),
+    ...overrides,
+  };
+}
+
 export function makeRecentAssetsStore(initial: RecentAsset[] = []): RecentAssetsStore {
   let items = initial;
   return {
@@ -50,13 +62,17 @@ export function makeServices(overrides: Partial<Services> = {}): Services {
     assetService: makeAssetService(),
     activityService: makeActivityService(),
     timeSeriesService: makeTimeSeriesService(),
+    fileService: makeFileService(),
     recentAssetsStore: makeRecentAssetsStore(),
     ...overrides,
   };
 }
 
 export function makeHostApi(): HostApi {
-  return { syncInternalState: vi.fn<HostApi['syncInternalState']>(() => Promise.resolve(true)) };
+  return {
+    syncInternalState: vi.fn<HostApi['syncInternalState']>(() => Promise.resolve(true)),
+    navigateExternal: vi.fn<HostApi['navigateExternal']>(() => Promise.resolve(true)),
+  };
 }
 
 type ProvidersOptions = { services?: Services; api?: HostApi | null; initialState?: string };
@@ -73,7 +89,9 @@ export function makeProviders({
       <QueryClientProvider client={queryClient}>
         <HostApiContext.Provider value={api}>
           <ServicesContext.Provider value={services}>
-            <WorkspaceStateProvider initialState={initialState}>{children}</WorkspaceStateProvider>
+            <FilePreviewContext.Provider value={(props) => <StubFilePreview {...props} />}>
+              <WorkspaceStateProvider initialState={initialState}>{children}</WorkspaceStateProvider>
+            </FilePreviewContext.Provider>
           </ServicesContext.Provider>
         </HostApiContext.Provider>
       </QueryClientProvider>

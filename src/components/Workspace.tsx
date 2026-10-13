@@ -8,6 +8,7 @@ import { useWorkspaceViewModel } from '../viewmodels/useWorkspaceViewModel';
 
 import { AssetHeader } from './AssetHeader';
 import { AssetSearch } from './AssetSearch';
+import { DocumentsPanel } from './DocumentsPanel';
 import { RecentAssets } from './RecentAssets';
 import { TimeSeriesPanel } from './TimeSeriesPanel';
 import { WorkOrdersPanel } from './WorkOrdersPanel';
@@ -26,6 +27,7 @@ export function Workspace() {
             <AssetHeader />
             <TimeSeriesPanel />
             <WorkOrdersPanel />
+            <DocumentsPanel />
           </>
         ) : (
           <>
