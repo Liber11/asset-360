@@ -22,6 +22,7 @@ import { RELATED_LIMIT } from '../services/relatedNodes';
 import { useDocumentsViewModel } from '../viewmodels/useDocumentsViewModel';
 
 import { useFilePreview } from './filePreview/FilePreviewContext';
+import { PreviewErrorBoundary } from './filePreview/PreviewErrorBoundary';
 import { PanelStatus } from './PanelStatus';
 
 const COLUMNS: ColumnDef<DocumentItem>[] = [
@@ -117,7 +118,9 @@ export function DocumentsPanel() {
                 {documentTypeLabel(open)} · Updated {formatDate(open.updatedTime)}
               </DialogDescription>
             </DialogHeader>
-            {renderPreview({ file: open.ref, name: open.name })}
+            <PreviewErrorBoundary key={refKey(open.ref)}>
+              {renderPreview({ file: open.ref, name: open.name })}
+            </PreviewErrorBoundary>
             <DialogFooter>
               <Button variant="outline" onClick={() => vm.download(open)} disabled={vm.isDownloading}>
                 <IconDownload aria-hidden className="size-4" />
