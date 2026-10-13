@@ -11,17 +11,10 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
-      exclude: [
-        'node_modules/',
-        'dist/',
-        '.claude/',
-        '.agents/',
-        'vitest.setup.ts',
-        '**/*.config.ts',
-        '**/*.d.ts',
-        // Vendored from the integrate-file-viewer skill; tested upstream, not by this app.
-        'src/cognite-file-viewer/',
-      ],
+      // Measure every app source file (not only files the tests happen to import), so the
+      // number reflects the whole of src/. Third-party code lives outside src/ (see vendor/).
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/**/*.test.{ts,tsx}', 'src/main.tsx', 'src/**/*.d.ts'],
     },
   },
 });

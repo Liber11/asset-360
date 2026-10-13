@@ -2,7 +2,7 @@ import { useCogniteSdk } from '@cognite/app-sdk/react';
 import { Alert, AlertDescription, AlertTitle } from '@cognite/aura/components/alert';
 import { Loader } from '@cognite/aura/components/loader';
 
-import { CogniteFileViewer } from '../../cognite-file-viewer';
+import { CogniteFileViewer } from '../../../vendor/cognite-file-viewer';
 
 import type { FilePreviewProps } from './FilePreviewContext';
 

@@ -38,6 +38,19 @@ describe('App', () => {
     expect(screen.getByText('Search for an asset to start')).toBeInTheDocument();
   });
 
+  it('builds the CDF-backed services itself when none are injected', async () => {
+    renderApp(
+      <App
+        deps={makeDeps()}
+        connectToHostApp={makeConnectedFn()}
+        filePreview={(props) => <StubFilePreview {...props} />}
+      />
+    );
+
+    expect(await screen.findByRole('searchbox', { name: 'Search assets' })).toBeInTheDocument();
+    expect(screen.getByText('Search for an asset to start')).toBeInTheDocument();
+  });
+
   it('shows the connection error when the host handshake fails', async () => {
     renderApp(<App deps={makeDeps()} connectToHostApp={() => Promise.reject(new Error('no host'))} />);
 
